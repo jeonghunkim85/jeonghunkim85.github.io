@@ -1,0 +1,550 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Deliwind">
+    <title>올바른 commit 메세지를 작성하는 방법 - Deliwind</title>
+    <link rel="canonical" href="https://blog2.deliwind.com/20200316/올바른-commit-메세지를-작성하는-방법/">
+    <meta name="author" content="shockshot@naver.com">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"shockshot@naver.com","sameAs":["https://github.com/jeonghunkim85","mailto:shockshot@naver.com","https://blog.deliwind.com"],"image":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38"},"articleBody":"사족그간 소중히(?) 작성하며(자주는 아니지만) 차곡차곡 써왔던 개인 블로그 글을 어느순간 날리게 되었다. 왜 날아가게 되었는지는 아직도 모른다. 사실 찐 원인은 간단하다.\n\n\n\n“넌 평소에 보안과 백업을 소중히 하지 않았지”\n\n1231. 사실 블로그는 홈 서버에 wordpress 로 대충 글만 올려놓고 있었는데, &quot;누가 내 블로그에 관심이나 있겠어?&quot; 라는 마인드로 보안쪽으로는 전혀 신경쓰지도, 관리하지도 않음.2. 그와중에 백업도주기적으로 안함\n\n\n사실 상용 서비스를 운용 할때는 보안과 백업은 기본중의 기본인 것을 쯧쯧.\n그렇게 5개월치의 글을 날려먹고 한동안 글 쓸 의욕을 잃고 헤매다, 다시 마음을 다잡고 하나씩 글을 써 보고자 한다.\n그리고 보안과 백업은 상대적으로 홈서버 운용보다 자유로는 github pages와 hexo로 옮겨왔다. 익힐게 많지만 이것도 또 하나의 즐거움 이리라.\n올바른 Commit 메세지를 작성하는 방법요즘은 progit이라는 책을 읽으며 git에 대해 공부하고 있다. “현업에서 git을 사용하고 있으므로, 이미 git은 어느정도 사용하는거 아냐?” 라고 할 수 있겠지만, 반은 맞고 반은 틀리다. 그냥 commit을 하고 pull request를 날리고, 코드 리뷰를 하고, merge를 하고 하는 수준은 할 수 있으나 “잘~” 쓰지는 못하고 있다. 그래서 git을 공부를 한다.\n오늘은 그 중 가장 기초중의 상기초 커밋 메세지를 작성하는 방법에 대해서 쓰려고 한다. 깃에서 커밋 메세지를 남기는 방법은 간단하다.\n1$ git commit -m &quot;커밋메세지&quot;\n\n잘 못 작성한 커밋 메세지의 예\n“이 커밋 메세지를 잘 남기라구? 어떻게 더 잘 남기지??”\n\n이런 의문이 생긴다면, 잘못 작성한 커밋 메세지의 예 부터 살펴보자\n\n\n멀리 갈 것도 없다. 작년 초의 내가 남긴 커밋이다. 황량하고 알 수 없는 커밋 메세지의 처참한 모습 이루 말할 수가 없다.\n물론, 이 총체적 난국의 git 흔적들은 비단 커밋 메세지만이 문제가 아니지만, 오늘의 주제는 커밋 메세지 이므로 커밋 메세지에 집중해서 살펴보자\n의미없는 커밋 메세지에, 심지어는 그마저도 귀찮았는지 . 도 있다. 미쳤구나 물론 이 커밋 메세지를 남기던 나는 프로젝트 마감 일정에 쫒기어 정말 제정신이 아니었는데다가, 같이 개발하는 동료는 한명밖에 없었고, 서로 바로 옆자리에 앉아 빈번히 커뮤니케이션 하고 있었기 때문에 서로의 커밋 메세지가 외계어로 쓰이던 암호로 넣던 별 탈이 없었다. 그당시에는..\n그러나, 소프트웨어는 한번 만들어 놓으면 끝이 아니다. 그리고 3개월 정도가 지나 열어 본 코드는 “내가 왜 이렇게 짰지? 이거 정말 내가 짠거 맞나?” 할정도로 낮설은 경우가 있다. (3개월 전의 나는 내가 아니라 타인이다.) 이럴 때 찾아보게 되는게 커밋 히스토린데 커밋 히스토리가 무의미한 커밋 메세지로 채워져 있따면.. 심지어 . 이라면?! 노답. 핵노답생각만 해도 아찔한데 난 이미 겪었다. 이런 아찔한 순간을.. 캡쳐의 히스토리가 이야기 해주고 있지 않은가? 이건 경험담이다..\n어떻게 좋은 커밋 메세지를 작성할 것인가?좋은 커밋 메세지를 작성하는 방법에 대해서는 이미 여러 잘 쓰여진 글들이 있다.\n그 중 하나를 소개해 본다.\ngit 커밋 메세지 작성법\n아래는 위 글에서 발췌한 훌륭한 git 커밋 메세지의 일곱가지 규칙이다.\n\n\n제목과 본문을 빈 행으로 분리한다\n제목 행을 50자로 제한한다\n제목 행 첫 글자는 대문자로 쓴다\n제목 행 끝에 마침표를 넣지 않는다\n제목 행에 명령문을 사용한다\n본문을 72자 단위로 개행한다\n어떻게 보다는 무엇과 왜를 설명한다\n\n\n위 글에 예시도 훌륭하게 나와있다. 핵심은 최대한 함축적으로 간결하게 제목을 작성하고,본문에 상세한 내용을 기술 하라는 것이다. 나도 위 일곱가지 규칙에 동의 한다. 그러나 몇몇가지 우리 실정에 맞지 않는 규칙들도 있다. 이 일곱가지 규칙은 영어로 커밋 메세지를 작성할 때의 규칙인데, 우리는 한글로 커밋 메세지를 작성할 때도 많기 때문이다.\n2. 제목 행을 50자로 제한한다이건 영어 기준이다. 한글 기준으로는 30자 정도가 적당한 것으로 보인다.터미널에서 열었을때, 영어 2글자-&gt; 한글 한글자 정도의 너비를 갖고 있기 때문이다.\n3. 제목 행 첫 글자는 대문자로 쓴다음.. 어… 음.. 영어로 쓸때만 지키면 된다\n5. 제목 행에 명령문을 사용한다사실 오늘 커밋 메세지에 대한 글을 쓰는 이유는 이 항목에 대한 이유가 크다. 일단, 블로그 글들이 그렇듯이, 이 이하 기술하는 글들은 내 개인적인 의견임을 감안하길 바란다.\n이 항목 때문에 한글 커밋 메세지에 대해서도 명령문을 사용하는것을 strict하게 지켜서\n\n“스프링 프레임워크의 버전을 업그레이드 하라”“NullPointerException 방지 코드를 넣어라”\n\n하는 식으로 커밋 메세지를 작성하는 경우를 꽤나 보았고, 이렇게 쓰기를 권고하는 블로그 글들도 많이 보았다. 개인적으로는 이런 형태의 커밋 메세지가 굉장히 이질적이기 때문에 별로 좋아하지 않는데, 왜 이렇게 작성 해야 하는지에 대해서도 열심히 찾아 보았는다.개인적으로 판단한 이 컨벤션의 시초는 “영어로 커밋 메세지를 작성” 할 때의 규칙을 그대로 한글로 들고 왔기 때문에 이런 일이 발생했다고 본다.\n\nI refactored subsystem X for readability =&gt; (X)Refactor subsystem X for readability =&gt; (O)\n\n쓸때없는 I는 없애버리고(글자 제한이 있으므로), git 시스템의 관점에서 수행한 일을 현재시제로 작성하게 되면, 이게 바로 영문법에서의 명령형이다.\n위 링크에 소개한 글에서는 이런 식으로 작성할 것을 권고 한다.\n\n만약 이 커밋이 적용되면 이 커밋은 가독성을 위해 서브시스템 X를 리팩토링한다=&gt; 가독성을 위해 서브시스템 X를 리팩토링한다만약 이 커밋이 적용되면 이 커밋은 Getting Started 문서를 갱신한다=&gt; Getting Started 문서를 갱신한다\n\n그러나 좀 부족한 것이 있다. 영문 명령형으로 커밋 메세지를 작성하게 되면 극명히 보이는 장점이 있다.\n\nrefactor subsystem X for readabilityupdate getting started documentationremove deprecated methodsrelease version 1.0.0merge pull request #123 from user/branch\n\n동사 + 목적어 로 표현되는 영문법 어순 특성 상, 어떤 행위를 했는지가 문장 제일 앞에 정렬 된다는 점이다. 이런 장점 때문에 더더욱 명령형으로 커밋 메세지를 작성 하라고 하는 것인데, 한글에서 그대로 이런 컨벤션을 사용하게 될 경우, 우측정렬을 하여 커밋 메세지를 보지 않는 이상 이런 장점은 누릴 수가 없게 된다.\n방법 1.따라서 한글로 작성하게 될 경우, 커밋이 담고있는 가장 큰 함축적인 행위의 동사를 제일 앞에 말머리로 붙여주고, 뒤에 커밋 메세지를 작성하는 것이 좋을 것 같다. 자연스런 문장을 위해 단어가 두번 들어가는것도 나쁘지 않다.\n\n리팩토링 - 서브 시스템 X. 가독성 향상 목적갱신 - Getting Started 문서\n\n방법 2.아니면 팀만이 사용하는 기호를 사용해 핵심 행위를 가리키는 단어를 강조하는 것도 좋은 방법 중의 하나일 것이다.\n\n가독성을 위해 서브 시스템 X를 [리팩토링]Getting Started 문서 [갱신]\n\n방법 3.세번째 방법은, 어차피 프로그램 개발에서 하는 행위들은 몇가지로 정해져 있고, 이는 카테고리화가 가능할 것 같다. Add, Refactor, Remove, Release 등등.. 이런 카테고리들을 팀별로 미리 정의 해 두고 앞부분에 prefix를 붙이는 것도 한 방법이다.\n\nrefactor - 가독성을 위해 서브 시스템 X를update - Getting Started 문서\n\n마무으리뭐, 이 외에도 여러 아이디어가 있을 수 있겠다. 핵심은, 함축적인 커밋 메세지를 한눈에 파악할 수 있도록 가독성을 확보하는 자신만의, 팀만의 방법을 찾는 것이다.(본인도 아직 팀원들과 이야기 하며 더 연구하고 찾는 중이다.) 그러나 이런 방법들이 고민스러워 컨벤션을 못 정하겠다면 일단 . 만은 피하자.\n순간 바쁘고 귀찮다고 .만을 남겼을때 지금의 나에게 화내고 있을 3개월 후의 나를 위해서, 1분만 더 고민하고 커밋 메세지를 남기는 습관을 들이는게 제일 중요하다.\n그럼 난 이만, 1년 전의 나에게 벌을 주러 가보려 한다..\n","dateCreated":"2020-03-16T23:40:00+09:00","dateModified":"2021-01-03T00:14:05+09:00","datePublished":"2020-03-16T23:40:00+09:00","description":"","headline":"올바른 commit 메세지를 작성하는 방법","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/"},"publisher":{"@type":"Organization","name":"shockshot@naver.com","sameAs":["https://github.com/jeonghunkim85","mailto:shockshot@naver.com","https://blog.deliwind.com"],"image":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38","logo":{"@type":"ImageObject","url":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38"}},"url":"https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/","keywords":"Git, 버전관리"}</script>
+    <meta name="description" content="사족그간 소중히(?) 작성하며(자주는 아니지만) 차곡차곡 써왔던 개인 블로그 글을 어느순간 날리게 되었다. 왜 날아가게 되었는지는 아직도 모른다. 사실 찐 원인은 간단하다.    “넌 평소에 보안과 백업을 소중히 하지 않았지”  1231. 사실 블로그는 홈 서버에 wordpress 로 대충 글만 올려놓고 있었는데, &quot;누가 내 블로그에 관심이나 있겠">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="올바른 commit 메세지를 작성하는 방법">
+<meta property="og:url" content="https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/index.html">
+<meta property="og:site_name" content="Deliwind">
+<meta property="og:description" content="사족그간 소중히(?) 작성하며(자주는 아니지만) 차곡차곡 써왔던 개인 블로그 글을 어느순간 날리게 되었다. 왜 날아가게 되었는지는 아직도 모른다. 사실 찐 원인은 간단하다.    “넌 평소에 보안과 백업을 소중히 하지 않았지”  1231. 사실 블로그는 홈 서버에 wordpress 로 대충 글만 올려놓고 있었는데, &quot;누가 내 블로그에 관심이나 있겠">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/Jigsaws-Doll-Saw-Movies.jpg">
+<meta property="og:image" content="https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/example-wrong-commit-message.png">
+<meta property="article:published_time" content="2020-03-16T14:40:00.000Z">
+<meta property="article:modified_time" content="2021-01-02T15:14:05.059Z">
+<meta property="article:author" content="shockshot@naver.com">
+<meta property="article:tag" content="Git, 버전관리">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/Jigsaws-Doll-Saw-Movies.jpg">
+    
+    
+        
+    
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-kvpycffeiaxsbgvbkdhwiqlinu750trh6s9bqthsefrjo7rf1q2lj1oqxj7d.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-159338205-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-159338205-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+
+<header id="header" data-behavior="2">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/%20" aria-label>
+            Deliwind
+        </a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about" aria-label="Open the link: /#about">
+        
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+<nav id="sidebar" data-behavior="2">
+    <div class="sidebar-container">
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/" rel="noopener" title="Home">
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" rel="noopener" title="Categories">
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" rel="noopener" title="Tags">
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-archives" rel="noopener" title="Archives">
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" rel="noopener" title="Search">
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" rel="noopener" title="About">
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/jeonghunkim85" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:shockshot@naver.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://blog.deliwind.com" target="_blank" rel="noopener" title="Another blog">
+                        <i class="sidebar-button-icon fa fa-blog" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Another blog</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="2" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            올바른 commit 메세지를 작성하는 방법
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-03-16T23:40:00+09:00">
+	
+		    Mar 16, 2020
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/git/">git</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h3 id="사족"><a href="#사족" class="headerlink" title="사족"></a>사족</h3><p>그간 소중히(?) 작성하며(자주는 아니지만) 차곡차곡 써왔던 개인 블로그 글을 어느순간 날리게 되었다. 왜 날아가게 되었는지는 아직도 모른다. 사실 찐 원인은 간단하다.</p>
+<img src="/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/Jigsaws-Doll-Saw-Movies.jpg" class title="넌 평소에 보안과 백업을 소중히 하지 않았지">
+
+<blockquote>
+<p>“넌 평소에 보안과 백업을 소중히 하지 않았지”</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 사실 블로그는 홈 서버에 wordpress 로 대충 글만 올려놓고 있었는데, </span><br><span class="line">&quot;누가 내 블로그에 관심이나 있겠어?&quot; 라는 마인드로 보안쪽으로는 전혀 신경쓰지도, 관리하지도 않음.</span><br><span class="line">2. 그와중에 백업도주기적으로 안함</span><br></pre></td></tr></table></figure>
+
+
+<p>사실 상용 서비스를 운용 할때는 보안과 백업은 기본중의 기본인 것을 쯧쯧.</p>
+<p>그렇게 5개월치의 글을 날려먹고 한동안 글 쓸 의욕을 잃고 헤매다, 다시 마음을 다잡고 하나씩 글을 써 보고자 한다.</p>
+<p>그리고 보안과 백업은 상대적으로 홈서버 운용보다 자유로는 github pages와 hexo로 옮겨왔다. 익힐게 많지만 이것도 또 하나의 즐거움 이리라.</p>
+<h2 id="올바른-Commit-메세지를-작성하는-방법"><a href="#올바른-Commit-메세지를-작성하는-방법" class="headerlink" title="올바른 Commit 메세지를 작성하는 방법"></a>올바른 Commit 메세지를 작성하는 방법</h2><p>요즘은 progit이라는 책을 읽으며 git에 대해 공부하고 있다. “현업에서 git을 사용하고 있으므로, 이미 git은 어느정도 사용하는거 아냐?” 라고 할 수 있겠지만, 반은 맞고 반은 틀리다. 그냥 commit을 하고 pull request를 날리고, 코드 리뷰를 하고, merge를 하고 하는 수준은 할 수 있으나 “잘~” 쓰지는 못하고 있다. 그래서 git을 공부를 한다.</p>
+<p>오늘은 그 중 가장 기초중의 상기초 커밋 메세지를 작성하는 방법에 대해서 쓰려고 한다. 깃에서 커밋 메세지를 남기는 방법은 간단하다.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&quot;커밋메세지&quot;</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="잘-못-작성한-커밋-메세지의-예"><a href="#잘-못-작성한-커밋-메세지의-예" class="headerlink" title="잘 못 작성한 커밋 메세지의 예"></a>잘 못 작성한 커밋 메세지의 예</h3><blockquote>
+<p>“이 커밋 메세지를 잘 남기라구? 어떻게 더 잘 남기지??”</p>
+</blockquote>
+<p>이런 의문이 생긴다면, 잘못 작성한 커밋 메세지의 예 부터 살펴보자</p>
+<img src="/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/example-wrong-commit-message.png" class title="과거의 나의 모습을 반성해 본다">
+
+<p>멀리 갈 것도 없다. 작년 초의 내가 남긴 커밋이다. <del>황량하고 알 수 없는 커밋 메세지의 처참한 모습 이루 말할 수가 없다.</del></p>
+<p>물론, 이 총체적 난국의 git 흔적들은 비단 커밋 메세지만이 문제가 아니지만, 오늘의 주제는 커밋 메세지 이므로 커밋 메세지에 집중해서 살펴보자</p>
+<p>의미없는 커밋 메세지에, 심지어는 그마저도 귀찮았는지 <code>.</code> 도 있다. <del>미쳤구나</del> 물론 이 커밋 메세지를 남기던 나는 프로젝트 마감 일정에 쫒기어 정말 제정신이 아니었는데다가, 같이 개발하는 동료는 한명밖에 없었고, 서로 바로 옆자리에 앉아 빈번히 커뮤니케이션 하고 있었기 때문에 서로의 커밋 메세지가 외계어로 쓰이던 암호로 넣던 별 탈이 없었다. 그당시에는..</p>
+<p>그러나, 소프트웨어는 한번 만들어 놓으면 끝이 아니다. 그리고 3개월 정도가 지나 열어 본 코드는 “내가 왜 이렇게 짰지? 이거 정말 내가 짠거 맞나?” 할정도로 낮설은 경우가 있다. <del>(3개월 전의 나는 내가 아니라 타인이다.)</del> 이럴 때 찾아보게 되는게 커밋 히스토린데 커밋 히스토리가 무의미한 커밋 메세지로 채워져 있따면.. 심지어 <code>.</code> 이라면?! <del>노답. 핵노답</del><br>생각만 해도 아찔한데 난 이미 겪었다. 이런 아찔한 순간을.. 캡쳐의 히스토리가 이야기 해주고 있지 않은가? 이건 경험담이다..</p>
+<h3 id="어떻게-좋은-커밋-메세지를-작성할-것인가"><a href="#어떻게-좋은-커밋-메세지를-작성할-것인가" class="headerlink" title="어떻게 좋은 커밋 메세지를 작성할 것인가?"></a>어떻게 좋은 커밋 메세지를 작성할 것인가?</h3><p>좋은 커밋 메세지를 작성하는 방법에 대해서는 이미 여러 잘 쓰여진 글들이 있다.</p>
+<p>그 중 하나를 소개해 본다.</p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="http://blog.weirdx.io/post/33832">git 커밋 메세지 작성법</a></p>
+<p>아래는 위 글에서 발췌한 훌륭한 git 커밋 메세지의 일곱가지 규칙이다.</p>
+<blockquote>
+<ol>
+<li>제목과 본문을 빈 행으로 분리한다</li>
+<li>제목 행을 50자로 제한한다</li>
+<li>제목 행 첫 글자는 대문자로 쓴다</li>
+<li>제목 행 끝에 마침표를 넣지 않는다</li>
+<li>제목 행에 명령문을 사용한다</li>
+<li>본문을 72자 단위로 개행한다</li>
+<li>어떻게 보다는 무엇과 왜를 설명한다</li>
+</ol>
+</blockquote>
+<p>위 글에 예시도 훌륭하게 나와있다. 핵심은 최대한 함축적으로 간결하게 제목을 작성하고,<br>본문에 상세한 내용을 기술 하라는 것이다. 나도 위 일곱가지 규칙에 동의 한다. 그러나 몇몇가지 우리 실정에 맞지 않는 규칙들도 있다. 이 일곱가지 규칙은 영어로 커밋 메세지를 작성할 때의 규칙인데, 우리는 한글로 커밋 메세지를 작성할 때도 많기 때문이다.</p>
+<h4 id="2-제목-행을-50자로-제한한다"><a href="#2-제목-행을-50자로-제한한다" class="headerlink" title="2. 제목 행을 50자로 제한한다"></a>2. 제목 행을 50자로 제한한다</h4><p>이건 영어 기준이다. 한글 기준으로는 30자 정도가 적당한 것으로 보인다.<br>터미널에서 열었을때, 영어 2글자-&gt; 한글 한글자 정도의 너비를 갖고 있기 때문이다.</p>
+<h4 id="3-제목-행-첫-글자는-대문자로-쓴다"><a href="#3-제목-행-첫-글자는-대문자로-쓴다" class="headerlink" title="3. 제목 행 첫 글자는 대문자로 쓴다"></a>3. 제목 행 첫 글자는 대문자로 쓴다</h4><p>음.. 어… 음.. 영어로 쓸때만 지키면 된다</p>
+<h4 id="5-제목-행에-명령문을-사용한다"><a href="#5-제목-행에-명령문을-사용한다" class="headerlink" title="5. 제목 행에 명령문을 사용한다"></a>5. 제목 행에 명령문을 사용한다</h4><p>사실 오늘 커밋 메세지에 대한 글을 쓰는 이유는 이 항목에 대한 이유가 크다. 일단, 블로그 글들이 그렇듯이, 이 이하 기술하는 글들은 내 개인적인 의견임을 감안하길 바란다.</p>
+<p>이 항목 때문에 한글 커밋 메세지에 대해서도 명령문을 사용하는것을 strict하게 지켜서</p>
+<blockquote>
+<p>“스프링 프레임워크의 버전을 업그레이드 하라”<br>“NullPointerException 방지 코드를 넣어라”</p>
+</blockquote>
+<p>하는 식으로 커밋 메세지를 작성하는 경우를 꽤나 보았고, 이렇게 쓰기를 권고하는 블로그 글들도 많이 보았다. 개인적으로는 이런 형태의 커밋 메세지가 굉장히 이질적이기 때문에 별로 좋아하지 않는데, 왜 이렇게 작성 해야 하는지에 대해서도 열심히 찾아 보았는다.<br>개인적으로 판단한 이 컨벤션의 시초는 “영어로 커밋 메세지를 작성” 할 때의 규칙을 그대로 한글로 들고 왔기 때문에 이런 일이 발생했다고 본다.</p>
+<blockquote>
+<p>I refactored subsystem X for readability =&gt; (X)<br>Refactor subsystem X for readability =&gt; (O)</p>
+</blockquote>
+<p>쓸때없는 I는 없애버리고(글자 제한이 있으므로), git 시스템의 관점에서 수행한 일을 현재시제로 작성하게 되면, 이게 바로 영문법에서의 명령형이다.</p>
+<p>위 링크에 소개한 글에서는 이런 식으로 작성할 것을 권고 한다.</p>
+<blockquote>
+<p>만약 이 커밋이 적용되면 이 커밋은 <strong>가독성을 위해 서브시스템 X를 리팩토링한다</strong><br>=&gt; 가독성을 위해 서브시스템 X를 리팩토링한다<br>만약 이 커밋이 적용되면 이 커밋은 <strong>Getting Started 문서를 갱신한다</strong><br>=&gt; Getting Started 문서를 갱신한다</p>
+</blockquote>
+<p>그러나 좀 부족한 것이 있다. 영문 명령형으로 커밋 메세지를 작성하게 되면 극명히 보이는 장점이 있다.</p>
+<blockquote>
+<p><strong>refactor</strong> subsystem X for readability<br><strong>update</strong> getting started documentation<br><strong>remove</strong> deprecated methods<br><strong>release</strong> version 1.0.0<br><strong>merge</strong> pull request #123 from user/branch</p>
+</blockquote>
+<p><code>동사 + 목적어</code> 로 표현되는 영문법 어순 특성 상, 어떤 행위를 했는지가 문장 제일 앞에 정렬 된다는 점이다. 이런 장점 때문에 더더욱 명령형으로 커밋 메세지를 작성 하라고 하는 것인데, 한글에서 그대로 이런 컨벤션을 사용하게 될 경우, 우측정렬을 하여 커밋 메세지를 보지 않는 이상 이런 장점은 누릴 수가 없게 된다.</p>
+<h5 id="방법-1"><a href="#방법-1" class="headerlink" title="방법 1."></a>방법 1.</h5><p>따라서 한글로 작성하게 될 경우, 커밋이 담고있는 가장 큰 함축적인 행위의 동사를 제일 앞에 말머리로 붙여주고, 뒤에 커밋 메세지를 작성하는 것이 좋을 것 같다. 자연스런 문장을 위해 단어가 두번 들어가는것도 나쁘지 않다.</p>
+<blockquote>
+<p>리팩토링 - 서브 시스템 X. 가독성 향상 목적<br>갱신 - Getting Started 문서</p>
+</blockquote>
+<h5 id="방법-2"><a href="#방법-2" class="headerlink" title="방법 2."></a>방법 2.</h5><p>아니면 팀만이 사용하는 기호를 사용해 핵심 행위를 가리키는 단어를 강조하는 것도 좋은 방법 중의 하나일 것이다.</p>
+<blockquote>
+<p>가독성을 위해 서브 시스템 X를 [리팩토링]<br>Getting Started 문서 [갱신]</p>
+</blockquote>
+<h5 id="방법-3"><a href="#방법-3" class="headerlink" title="방법 3."></a>방법 3.</h5><p>세번째 방법은, 어차피 프로그램 개발에서 하는 행위들은 몇가지로 정해져 있고, 이는 카테고리화가 가능할 것 같다. Add, Refactor, Remove, Release 등등.. 이런 카테고리들을 팀별로 미리 정의 해 두고 앞부분에 prefix를 붙이는 것도 한 방법이다.</p>
+<blockquote>
+<p>refactor - 가독성을 위해 서브 시스템 X를<br>update - Getting Started 문서</p>
+</blockquote>
+<h2 id="마무으리"><a href="#마무으리" class="headerlink" title="마무으리"></a>마무으리</h2><p>뭐, 이 외에도 여러 아이디어가 있을 수 있겠다. 핵심은, <strong>함축적인 커밋 메세지를 한눈에 파악할 수 있도록 가독성을 확보하는 자신만의, 팀만의 방법을 찾는 것</strong>이다.<br>(본인도 아직 팀원들과 이야기 하며 더 연구하고 찾는 중이다.) 그러나 이런 방법들이 고민스러워 컨벤션을 못 정하겠다면 일단 <code>.</code> 만은 피하자.</p>
+<p>순간 바쁘고 귀찮다고 <code>.</code>만을 남겼을때 지금의 나에게 화내고 있을 3개월 후의 나를 위해서, 1분만 더 고민하고 커밋 메세지를 남기는 습관을 들이는게 제일 중요하다.</p>
+<p>그럼 난 이만, 1년 전의 나에게 벌을 주러 가보려 한다..</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Git-%EB%B2%84%EC%A0%84%EA%B4%80%EB%A6%AC/" rel="tag">Git, 버전관리</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20200405/IntelliJ%EC%97%90%EC%84%9C-http%EB%A1%9C-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EA%B8%B0/" data-tooltip="IntelliJ에서 `.http`로 테스트 하기" aria-label="PREVIOUS: IntelliJ에서 `.http`로 테스트 하기">
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20181221/frontend-vue-typescript-5/" data-tooltip="VueJS 에서 Typescript로 개발하기 5" aria-label="NEXT: VueJS 에서 Typescript로 개발하기 5">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/" title="Share on Facebook" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/" title="Share on Twitter" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2021 shockshot@naver.com. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20200405/IntelliJ%EC%97%90%EC%84%9C-http%EB%A1%9C-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EA%B8%B0/" data-tooltip="IntelliJ에서 `.http`로 테스트 하기" aria-label="PREVIOUS: IntelliJ에서 `.http`로 테스트 하기">
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20181221/frontend-vue-typescript-5/" data-tooltip="VueJS 에서 Typescript로 개발하기 5" aria-label="NEXT: VueJS 에서 Typescript로 개발하기 5">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/" title="Share on Facebook" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/" title="Share on Twitter" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="2">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <h4 id="about-card-name">shockshot@naver.com</h4>
+        
+            <div id="about-card-bio"><p>author.bio</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover2.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ofs4ykkzhow0axhilcw7ijqajqncd242ivjtsphmyhqoivownzrn8dpzz1yu.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://blog2.deliwind.com/20200316/%EC%98%AC%EB%B0%94%EB%A5%B8-commit-%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC-%EC%9E%91%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/';
+              
+            this.page.identifier = '20200316/올바른-commit-메세지를-작성하는-방법/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'blog2deliwind';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

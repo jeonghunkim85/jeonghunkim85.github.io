@@ -1,0 +1,512 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Deliwind">
+    <title>java enum을 맛깔나게 사용해 보자 - Deliwind</title>
+    <link rel="canonical" href="https://blog2.deliwind.com/20200518/java-enum을-맛깔나게-사용해-보자/">
+    <meta name="author" content="shockshot@naver.com">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"shockshot@naver.com","sameAs":["https://github.com/jeonghunkim85","mailto:shockshot@naver.com","https://blog.deliwind.com"],"image":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38"},"articleBody":"원래 Enum에 관련된 글도 이 전 블로그에서 작성했던 적이 있었다. 한번 글들을 날려먹고 두번째 작성하는 글이므로,이 전에 작성했던 글만큼의 정성을 들일 수 있을까…..?\n일단 Java Enum에 대해서는 내가 지금부터 쓰는 글보다 잘 써 놓은 글이 있으니 먼저 읽어 보는것도 좋을 것 같다.\nenum을 사용하는 이유는 여러 가지가 있으나, 가장 큰 이유는 DB의 코드값과 달리 IDE 또는 컴파일 단계에서 지원을 받을수 있다는게 가장 큰 이유일 것이다. 자동완성도 지원하며 매직넘버와 달리 오타를 냈다면 컴파일 단계에서 잡아준다. 그말이 그말이잖..\n장점, 장점을 보자컴파일 단계에서 지원을 받을 수 있다IDE에서는 자동완성도 되고, 오타가 났을 경우에 런타임 에러가 아닌 컴파일 에러를 내므로 버그를 만들 확률이 줄어든다.(어디까지나 완벽히 없어지는건 아니다. 버그 장인은 도구를 탓하지 않는다 )\n리팩토링 또는 수정이 쉽다값이 추가 되더라도 enum값 하나만 추가 하면 된다. 혹시 enum이 내포하고 있는 값이 달라진다면 enum만 수정하면 된다.\n그 외에도기본적으로 enum은 선언시 불변객체로 생성되므로 여러번 할당하더라도 새로 object를 생성하는 비용 부담이 덜하고, String과는 달리 equals를 사용하여 비교할 필요가 없다. == 를 사용하여 비교해도 잘 작동한다.\n그렇다면 단점은?배포 문제에서 자유롭지 못하다컴파일 단계에서 작동해서 IDE의 지원을 받을 수 있다는 건, 반대로 배포 문제에서 자유롭지 못하다는 뜻이기도 하다. 간단한 값 추가가 있다고 하더라도 DB에서 사용하는 코드와는 달리 배포를 해야 한다. 요즘은 CI/CD가 워낙 잘 돼있는데다가 무중단 배포 환경도 손쉽게 구축하여 사용하는 추세라 크게 문제가 안된다고 할 수 있지만, 그렇다고 하더라도 분명 DB에서 손쉽게 추가하는 것에 비하면 부담이 되는 부분은 사실이다.\n만약 DB에서 일원화된 persistant 영역에서 관리하는 코드값이라고 하면 코드만 추가 해주면 끝이지만, 여러 서비스에서 사용하는 값이라면 각 서비스 별로 챙겨서 배포해야 하며, 그러다 보면 누락하는 서비스가 있을수도 있다. (그게 우리 서비스도 이랬던 적이 있더랬..) 또한 이런식으로 누락하는 서비스에서 발생하는 오류는 단순히 DB 코드를 추가했다가 생기는 오류보다 더 크리티컬 하다.\nenum이 적극적으로 쓰이지 않던 때에는 거의 모든 상태값들을 코드 테이블을 하나 만들어놓고 다 때려 박았다. 사실 배포 문제에서 자유롭지 못한 문제가 있지만, 생각보다 우리가 코드라고 생각하는 아이들은 사실은 코드가 아닌 경우가 많다. 자주 바뀌는 값과 바뀌지 않는 값을 잘 구분해서 자주 바뀌지 않는 녀석들을 enum으로 선언해서 사용하자.\n숫자만 넣어서 만들수는 없다망치를 든 사람에게는 모든게 못으로 보인다고, enum의 맛을 알게 되면 모든 코드를 enum으로 바꾸고 싶은 욕망에 사로잡히게 된다. 그러나 이렇게 enum으로 하나둘씩 바꾸다 보면 숫자로만 돼있는 코드들은 enum으로 만들 수 없다는 것을 깨닿게 된다.enum의 상태값들은 java의 필드명 정의하는 규칙과 같이 숫자로만 구성할 수는 없다.\n사실 대부분 enum 상태값으로 정의하고자 하는 속성은 숫자가 아닌 다른 뜻을 갖고 있는 경우가 많이 있지만 진짜 숫자만 있는 경우라면? 대체할 만한 단어가 없다면??? 그럼 그냥 다른 문자를 붙이는 수밖에 없다.\n123enum Numbers &#123;  _1, _2, _3;&#125;\n\n별로 맘에는 안든다. 그렇지만 범위를 제한할 수 없는 int 필드보다는 낫다.\n123enum Numbers &#123;  1ST, 2ND, 3RD;&#125;\n\n뭐 이런것도 나쁘지는 않다.\n좀 더 고급지게 사용해보자자바의 enum은 다른 언어의 enum에 비해서 좀 더 활용도가 높다. 사실 java에서 enum은 하나의 완전한 클래스로 취급 되는데 이 때문에 enum도 인스터스 변수를 가질수도 있고, interface를 implements 하도록 하거나 abstract로 선언할 수도 있으며 method나 static method를 만들수도 있다.\n아래 예제를 보자.\n123456789101112131415enum Sequences&#123;  FIRST(1),  SECOND(2),  THIRD(3);  private int order;  Sequences(int order) &#123;    this.order = order;  &#125;  public int getOrder() &#123;    return order;  &#125;&#125;\n\n이렇게 단순하게 사용하는 경우는 별로 없지만(심지어 java는 ordinal() 이라는 기본 메소드를 제공한다. 그러나 ordinal은 가급적 사용하지 않는것이 좋다. 이유는 후술) 코드에서 보이는 바와 같이 클래스의 모습과 크게 다르지 않다. 더욱이 자바의 enum은 이런 변수를 하나만 사용 가능한 것이 아니라 여러개가 사용 가능하다.\n123456789101112131415161718192021enum Sequences&#123;  FIRST(1, &quot;1st&quot;),  SECOND(2, &quot;2nd&quot;),  THIRD(3, &quot;3rd&quot;);  private int order;  private String shorten;  Sequences(int order, String shorten) &#123;    this.order = order;    this.shorten = shorten;  &#125;  public int getOrder() &#123;    return order;  &#125;  public String getShorten() &#123;    return shorten;  &#125;&#125;\n\n참고로 FIRST(1, &quot;1st&quot;) 이렇게 enum을 선언하는 구문은 생성자 메소드를 호출하는 방식이기 때문에 생성자를 어떻게 만드느냐에 따라 다른 방식으로도 사용 가능하다. 또한 enum은 static 영역에 저장되기 때문에 enum을 호출할때마다 생성자를 호출하는것이 아니어서 알고리즘의 효율성을 그렇게까지 신경쓰지 않아도 된다.\n내가 즐겨 쓰는 방법이다.\n12345678910111213141516171819202122232425enum Media &#123;  MOVIE(&quot;horror, comedy, sf, family&quot;),  MUSIC(&quot;dance, balad, rock, classic&quot;);  private Set&lt;String&gt; genreSet;    Media(String genreString) &#123;    this.genreSet = Arrays.asList(genreString.split(&quot;,&quot;))      .stream()      .map(String::trim)      .collect(Collectors.toSet());  &#125;    public boolean contains(String genre) &#123;    return this.genreSet.contains(genre);  &#125;    public static Media determine(String genre) &#123;    return Arrays.asList(Media.values()).stream()        .filter(media -&gt; media.contains(genre))        .findFirst()        .orElseThrow(() -&gt; new IllegalArgumentException(&quot;there is no matched genre&quot;));  &#125;&#125;\n\n물론 아래 코드처럼 생성자에서 array를 바로 만들어서 받을수도 있겠으나 내 취향은 위 코드가 더 맞아서 주로 이렇게 쓴다. (무엇보다 set의 contains 시간 복잡도가 list보다 더 유리하다)\n1234567891011enum Media &#123;  MOVIE(Arrays.asList(&quot;horror&quot;, &quot;comedy&quot;, &quot;sf&quot;, &quot;family&quot;)),  MUSIC(Arrays.asList(&quot;dance&quot;, &quot;comedy&quot;, &quot;sf&quot;, &quot;family&quot;));  private List&lt;String&gt; genreSet;  Media(List&lt;String&gt; genreSet) &#123;    this.genreSet = genreSet;  &#125;  ...\n\n또한 enum에서 변수로 익명함수를 담고 있을 수도 있기 때문에 이를 사용하면 더욱더 활용도가 높아진다. 간단한 사칙연산을 수행하는 enum이다.(Lombok도 잘 먹혀서, 아래부터는 lombok을 활용해 constructor를 만들어 보겠다.)\n12345678910111213141516@AllArgsConstructorenum Calc &#123;  ADD(&quot;+&quot;, (a, b) -&gt; a + b),  SUBTRACT(&quot;-&quot;, (a, b) -&gt; a - b),  TIMES(&quot;*&quot;, (a, b) -&gt; a * b),  MOD(&quot;/&quot;, (a, b) -&gt; a / b);    @Getter  private String character;  private BiFunction&lt;Integer, Integer, Integer&gt; calculation;    public int calc(int a, int b) &#123;    return calculation.apply(a, b);  &#125;&#125;\n\n아래는 위와 같은 일을 하는 코드를 abstract 메소드를 활용하여 만들어 본 코드이다. (java7)이렇게도 사용 가능하니 적절히 필요에 따라 원하는 방법대로 사용하면 좋다.\n1234567891011121314151617181920212223242526272829303132@Getter@AllArgsConstructorpublic enum Calc &#123;  ADD(&quot;+&quot;)&#123;    @Override    public int calc(int a, int b)&#123;      return a + b;    &#125;  &#125;,  SUBTRACT(&quot;−&quot;)&#123;    @Override    public int calc(int a, int b)&#123;      return a - b;    &#125;  &#125;,  TIMES(&quot;×&quot;)&#123;    @Override    public int calc(int a, int b) &#123;      return a * b;    &#125;  &#125;,  MOD(&quot;÷&quot;)&#123;    @Override    public int calc(int a, int b)&#123;      return a / b;    &#125;  &#125;;  private String character;  public abstract int calc(int a, int b);&#125;\n\n이런식으로 enum에 디자인 패턴을 얹어 사용하면 코드들이 단순 명료해 지는것을 느낄 수 있을 것이다.\n왜 ordinal()을 사용하지 않아야 하나?아까 잠깐 언급하고 넘어간 ordinal() 메소드에 대해 이야기 해보자. enum은 순서를 가진 열거형이고, 그 순서값을 int로 반환하는 ordinal()이라는 메소드를 제공해준다. 그러나 ordinal을 사용하게 되면 나중에 유지보수에 문제가 발생하게 된다. (이 부분은 effective java item 35를 보면 자세히 나온다)\n중간에 새로운 enum 요소가 끼어 드는 경우 새로운 요소 뒤에 위치한 enum들의 연산은 모두 망가지게 된다.\n따라서 ordinal을 사용하는 것보다 차라리 위에서 만든 Sequence enum처럼 인스턴스 필드를 사용하여 int value를 담아두고 이를 return하는 getter를 사용하는것이 더 좋다.\n\n내가 java 에서 enum을 사용하는 방법은 이정도이다. 물론 더 다양 하게 사용하는 방법도 있다. (enum 내부에 또 enum을 정의해 사용한다던지, 좀 다른 이야기지만 EnumMap을 사용하는 방법도 있고) 그러나 이정도만 알아도 java enum 초보 티는 좀 벗었다고 할 수 있지 않을까?\n끗.","dateCreated":"2020-05-18T23:41:00+09:00","dateModified":"2021-01-03T00:14:05+09:00","datePublished":"2020-05-18T23:41:00+09:00","description":"","headline":"java enum을 맛깔나게 사용해 보자","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog2.deliwind.com/20200518/java-enum%EC%9D%84-%EB%A7%9B%EA%B9%94%EB%82%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4-%EB%B3%B4%EC%9E%90/"},"publisher":{"@type":"Organization","name":"shockshot@naver.com","sameAs":["https://github.com/jeonghunkim85","mailto:shockshot@naver.com","https://blog.deliwind.com"],"image":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38","logo":{"@type":"ImageObject","url":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38"}},"url":"https://blog2.deliwind.com/20200518/java-enum%EC%9D%84-%EB%A7%9B%EA%B9%94%EB%82%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4-%EB%B3%B4%EC%9E%90/","keywords":"Java"}</script>
+    <meta name="description" content="원래 Enum에 관련된 글도 이 전 블로그에서 작성했던 적이 있었다. 한번 글들을 날려먹고 두번째 작성하는 글이므로,이 전에 작성했던 글만큼의 정성을 들일 수 있을까…..? 일단 Java Enum에 대해서는 내가 지금부터 쓰는 글보다 잘 써 놓은 글이 있으니 먼저 읽어 보는것도 좋을 것 같다. enum을 사용하는 이유는 여러 가지가 있으나, 가장 큰 이유는">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="java enum을 맛깔나게 사용해 보자">
+<meta property="og:url" content="https://blog2.deliwind.com/20200518/java-enum%EC%9D%84-%EB%A7%9B%EA%B9%94%EB%82%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4-%EB%B3%B4%EC%9E%90/index.html">
+<meta property="og:site_name" content="Deliwind">
+<meta property="og:description" content="원래 Enum에 관련된 글도 이 전 블로그에서 작성했던 적이 있었다. 한번 글들을 날려먹고 두번째 작성하는 글이므로,이 전에 작성했던 글만큼의 정성을 들일 수 있을까…..? 일단 Java Enum에 대해서는 내가 지금부터 쓰는 글보다 잘 써 놓은 글이 있으니 먼저 읽어 보는것도 좋을 것 같다. enum을 사용하는 이유는 여러 가지가 있으나, 가장 큰 이유는">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-18T14:41:00.000Z">
+<meta property="article:modified_time" content="2021-01-02T15:14:05.077Z">
+<meta property="article:author" content="shockshot@naver.com">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-kvpycffeiaxsbgvbkdhwiqlinu750trh6s9bqthsefrjo7rf1q2lj1oqxj7d.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-159338205-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-159338205-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+
+<header id="header" data-behavior="2">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/%20" aria-label>
+            Deliwind
+        </a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about" aria-label="Open the link: /#about">
+        
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+<nav id="sidebar" data-behavior="2">
+    <div class="sidebar-container">
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/" rel="noopener" title="Home">
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" rel="noopener" title="Categories">
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" rel="noopener" title="Tags">
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-archives" rel="noopener" title="Archives">
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" rel="noopener" title="Search">
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" rel="noopener" title="About">
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/jeonghunkim85" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:shockshot@naver.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://blog.deliwind.com" target="_blank" rel="noopener" title="Another blog">
+                        <i class="sidebar-button-icon fa fa-blog" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Another blog</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="2" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            java enum을 맛깔나게 사용해 보자
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-05-18T23:41:00+09:00">
+	
+		    May 18, 2020
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Java/">Java</a>, <a class="category-link" href="/categories/Java/Enum/">Enum</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>원래 Enum에 관련된 글도 이 전 블로그에서 작성했던 적이 있었다. 한번 글들을 날려먹고 두번째 작성하는 글이므로,<br><del>이 전에 작성했던 글만큼의 정성을 들일 수 있을까…..?</del></p>
+<p>일단 Java Enum에 대해서는 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://woowabros.github.io/tools/2017/07/10/java-enum-uses.html">내가 지금부터 쓰는 글보다 잘 써 놓은 글</a>이 있으니 먼저 읽어 보는것도 좋을 것 같다.</p>
+<p>enum을 사용하는 이유는 여러 가지가 있으나, 가장 큰 이유는 DB의 코드값과 달리 <strong><em>IDE 또는 컴파일 단계에서 지원을 받을수 있다</em></strong>는게 가장 큰 이유일 것이다. 자동완성도 지원하며 매직넘버와 달리 오타를 냈다면 컴파일 단계에서 잡아준다. <del>그말이 그말이잖..</del></p>
+<h2 id="장점-장점을-보자"><a href="#장점-장점을-보자" class="headerlink" title="장점, 장점을 보자"></a>장점, 장점을 보자</h2><h4 id="컴파일-단계에서-지원을-받을-수-있다"><a href="#컴파일-단계에서-지원을-받을-수-있다" class="headerlink" title="컴파일 단계에서 지원을 받을 수 있다"></a>컴파일 단계에서 지원을 받을 수 있다</h4><p>IDE에서는 자동완성도 되고, 오타가 났을 경우에 런타임 에러가 아닌 컴파일 에러를 내므로 버그를 만들 확률이 줄어든다.(어디까지나 완벽히 없어지는건 아니다. <del>버그 장인은 도구를 탓하지 않는다</del> )</p>
+<h4 id="리팩토링-또는-수정이-쉽다"><a href="#리팩토링-또는-수정이-쉽다" class="headerlink" title="리팩토링 또는 수정이 쉽다"></a>리팩토링 또는 수정이 쉽다</h4><p>값이 추가 되더라도 enum값 하나만 추가 하면 된다. 혹시 enum이 내포하고 있는 값이 달라진다면 enum만 수정하면 된다.</p>
+<h4 id="그-외에도"><a href="#그-외에도" class="headerlink" title="그 외에도"></a>그 외에도</h4><p>기본적으로 enum은 선언시 불변객체로 생성되므로 여러번 할당하더라도 새로 object를 생성하는 비용 부담이 덜하고, String과는 달리 equals를 사용하여 비교할 필요가 없다. <code>==</code> 를 사용하여 비교해도 잘 작동한다.</p>
+<h2 id="그렇다면-단점은"><a href="#그렇다면-단점은" class="headerlink" title="그렇다면 단점은?"></a>그렇다면 단점은?</h2><h4 id="배포-문제에서-자유롭지-못하다"><a href="#배포-문제에서-자유롭지-못하다" class="headerlink" title="배포 문제에서 자유롭지 못하다"></a>배포 문제에서 자유롭지 못하다</h4><p>컴파일 단계에서 작동해서 IDE의 지원을 받을 수 있다는 건, 반대로 배포 문제에서 자유롭지 못하다는 뜻이기도 하다. 간단한 값 추가가 있다고 하더라도 DB에서 사용하는 코드와는 달리 배포를 해야 한다. 요즘은 CI/CD가 워낙 잘 돼있는데다가 무중단 배포 환경도 손쉽게 구축하여 사용하는 추세라 크게 문제가 안된다고 할 수 있지만, 그렇다고 하더라도 분명 DB에서 손쉽게 추가하는 것에 비하면 부담이 되는 부분은 사실이다.</p>
+<p>만약 DB에서 일원화된 persistant 영역에서 관리하는 코드값이라고 하면 코드만 추가 해주면 끝이지만, 여러 서비스에서 사용하는 값이라면 각 서비스 별로 챙겨서 배포해야 하며, 그러다 보면 누락하는 서비스가 있을수도 있다. (<del>그게 우리 서비스도 이랬던 적이 있더랬..</del>) 또한 이런식으로 누락하는 서비스에서 발생하는 오류는 단순히 DB 코드를 추가했다가 생기는 오류보다 더 크리티컬 하다.</p>
+<p>enum이 적극적으로 쓰이지 않던 때에는 거의 모든 상태값들을 코드 테이블을 하나 만들어놓고 다 때려 박았다. 사실 배포 문제에서 자유롭지 못한 문제가 있지만, 생각보다 우리가 코드라고 생각하는 아이들은 사실은 코드가 아닌 경우가 많다. 자주 바뀌는 값과 바뀌지 않는 값을 잘 구분해서 자주 바뀌지 않는 녀석들을 enum으로 선언해서 사용하자.</p>
+<h4 id="숫자만-넣어서-만들수는-없다"><a href="#숫자만-넣어서-만들수는-없다" class="headerlink" title="숫자만 넣어서 만들수는 없다"></a>숫자만 넣어서 만들수는 없다</h4><p>망치를 든 사람에게는 모든게 못으로 보인다고, enum의 맛을 알게 되면 모든 코드를 enum으로 바꾸고 싶은 욕망에 사로잡히게 된다. 그러나 이렇게 enum으로 하나둘씩 바꾸다 보면 숫자로만 돼있는 코드들은 enum으로 만들 수 없다는 것을 깨닿게 된다.<br>enum의 상태값들은 java의 필드명 정의하는 규칙과 같이 숫자로만 구성할 수는 없다.</p>
+<p>사실 대부분 enum 상태값으로 정의하고자 하는 속성은 숫자가 아닌 다른 뜻을 갖고 있는 경우가 많이 있지만 진짜 숫자만 있는 경우라면? 대체할 만한 단어가 없다면??? 그럼 그냥 다른 문자를 붙이는 수밖에 없다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Numbers</span> </span>&#123;</span><br><span class="line">  _1, _2, _3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>별로 맘에는 안든다. 그렇지만 범위를 제한할 수 없는 int 필드보다는 낫다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Numbers</span> </span>&#123;</span><br><span class="line">  1ST, 2ND, 3RD;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>뭐 이런것도 나쁘지는 않다.</p>
+<h2 id="좀-더-고급지게-사용해보자"><a href="#좀-더-고급지게-사용해보자" class="headerlink" title="좀 더 고급지게 사용해보자"></a>좀 더 고급지게 사용해보자</h2><p>자바의 enum은 다른 언어의 enum에 비해서 좀 더 활용도가 높다. 사실 java에서 enum은 하나의 완전한 클래스로 취급 되는데 이 때문에 enum도 인스터스 변수를 가질수도 있고, interface를 implements 하도록 하거나 abstract로 선언할 수도 있으며 method나 static method를 만들수도 있다.</p>
+<p>아래 예제를 보자.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Sequences</span></span>&#123;</span><br><span class="line">  FIRST(<span class="number">1</span>),</span><br><span class="line">  SECOND(<span class="number">2</span>),</span><br><span class="line">  THIRD(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> order;</span><br><span class="line"></span><br><span class="line">  Sequences(<span class="keyword">int</span> order) &#123;</span><br><span class="line">    <span class="keyword">this</span>.order = order;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> order;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>이렇게 단순하게 사용하는 경우는 별로 없지만(심지어 java는 <code>ordinal()</code> 이라는 기본 메소드를 제공한다. 그러나 ordinal은 가급적 사용하지 않는것이 좋다. 이유는 후술) 코드에서 보이는 바와 같이 클래스의 모습과 크게 다르지 않다. 더욱이 자바의 enum은 이런 변수를 하나만 사용 가능한 것이 아니라 여러개가 사용 가능하다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Sequences</span></span>&#123;</span><br><span class="line">  FIRST(<span class="number">1</span>, <span class="string">&quot;1st&quot;</span>),</span><br><span class="line">  SECOND(<span class="number">2</span>, <span class="string">&quot;2nd&quot;</span>),</span><br><span class="line">  THIRD(<span class="number">3</span>, <span class="string">&quot;3rd&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> order;</span><br><span class="line">  <span class="keyword">private</span> String shorten;</span><br><span class="line"></span><br><span class="line">  Sequences(<span class="keyword">int</span> order, String shorten) &#123;</span><br><span class="line">    <span class="keyword">this</span>.order = order;</span><br><span class="line">    <span class="keyword">this</span>.shorten = shorten;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> order;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">getShorten</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> shorten;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>참고로 <code>FIRST(1, &quot;1st&quot;)</code> 이렇게 enum을 선언하는 구문은 생성자 메소드를 호출하는 방식이기 때문에 생성자를 어떻게 만드느냐에 따라 다른 방식으로도 사용 가능하다. 또한 enum은 static 영역에 저장되기 때문에 enum을 호출할때마다 생성자를 호출하는것이 아니어서 알고리즘의 효율성을 그렇게까지 신경쓰지 않아도 된다.</p>
+<p>내가 즐겨 쓰는 방법이다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Media</span> </span>&#123;</span><br><span class="line">  MOVIE(<span class="string">&quot;horror, comedy, sf, family&quot;</span>),</span><br><span class="line">  MUSIC(<span class="string">&quot;dance, balad, rock, classic&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> Set&lt;String&gt; genreSet;</span><br><span class="line">  </span><br><span class="line">  Media(String genreString) &#123;</span><br><span class="line">    <span class="keyword">this</span>.genreSet = Arrays.asList(genreString.split(<span class="string">&quot;,&quot;</span>))</span><br><span class="line">      .stream()</span><br><span class="line">      .map(String::trim)</span><br><span class="line">      .collect(Collectors.toSet());</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(String genre)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.genreSet.contains(genre);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Media <span class="title">determine</span><span class="params">(String genre)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Arrays.asList(Media.values()).stream()</span><br><span class="line">        .filter(media -&gt; media.contains(genre))</span><br><span class="line">        .findFirst()</span><br><span class="line">        .orElseThrow(() -&gt; <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;there is no matched genre&quot;</span>));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>물론 아래 코드처럼 생성자에서 array를 바로 만들어서 받을수도 있겠으나 내 취향은 위 코드가 더 맞아서 주로 이렇게 쓴다. (무엇보다 set의 contains 시간 복잡도가 list보다 더 유리하다)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Media</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  MOVIE(Arrays.asList(<span class="string">&quot;horror&quot;</span>, <span class="string">&quot;comedy&quot;</span>, <span class="string">&quot;sf&quot;</span>, <span class="string">&quot;family&quot;</span>)),</span><br><span class="line">  MUSIC(Arrays.asList(<span class="string">&quot;dance&quot;</span>, <span class="string">&quot;comedy&quot;</span>, <span class="string">&quot;sf&quot;</span>, <span class="string">&quot;family&quot;</span>));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> List&lt;String&gt; genreSet;</span><br><span class="line"></span><br><span class="line">  Media(List&lt;String&gt; genreSet) &#123;</span><br><span class="line">    <span class="keyword">this</span>.genreSet = genreSet;</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+
+<p>또한 enum에서 변수로 익명함수를 담고 있을 수도 있기 때문에 이를 사용하면 더욱더 활용도가 높아진다. 간단한 사칙연산을 수행하는 enum이다.<br>(Lombok도 잘 먹혀서, 아래부터는 lombok을 활용해 constructor를 만들어 보겠다.)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Calc</span> </span>&#123;</span><br><span class="line">  ADD(<span class="string">&quot;+&quot;</span>, (a, b) -&gt; a + b),</span><br><span class="line">  SUBTRACT(<span class="string">&quot;-&quot;</span>, (a, b) -&gt; a - b),</span><br><span class="line">  TIMES(<span class="string">&quot;*&quot;</span>, (a, b) -&gt; a * b),</span><br><span class="line">  MOD(<span class="string">&quot;/&quot;</span>, (a, b) -&gt; a / b);</span><br><span class="line">  </span><br><span class="line">  <span class="meta">@Getter</span></span><br><span class="line">  <span class="keyword">private</span> String character;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> BiFunction&lt;Integer, Integer, Integer&gt; calculation;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">calc</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> calculation.apply(a, b);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>아래는 위와 같은 일을 하는 코드를 abstract 메소드를 활용하여 만들어 본 코드이다. (java7)<br>이렇게도 사용 가능하니 적절히 필요에 따라 원하는 방법대로 사용하면 좋다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">Calc</span> </span>&#123;</span><br><span class="line">  ADD(<span class="string">&quot;+&quot;</span>)&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">calc</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>&#123;</span><br><span class="line">      <span class="keyword">return</span> a + b;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  SUBTRACT(<span class="string">&quot;−&quot;</span>)&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">calc</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>&#123;</span><br><span class="line">      <span class="keyword">return</span> a - b;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  TIMES(<span class="string">&quot;×&quot;</span>)&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">calc</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> a * b;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  MOD(<span class="string">&quot;÷&quot;</span>)&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">calc</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>&#123;</span><br><span class="line">      <span class="keyword">return</span> a / b;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> String character;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">calc</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>이런식으로 enum에 디자인 패턴을 얹어 사용하면 코드들이 단순 명료해 지는것을 느낄 수 있을 것이다.</p>
+<h2 id="왜-ordinal-을-사용하지-않아야-하나"><a href="#왜-ordinal-을-사용하지-않아야-하나" class="headerlink" title="왜 ordinal()을 사용하지 않아야 하나?"></a>왜 <code>ordinal()</code>을 사용하지 않아야 하나?</h2><p>아까 잠깐 언급하고 넘어간 <code>ordinal()</code> 메소드에 대해 이야기 해보자. enum은 순서를 가진 열거형이고, 그 순서값을 int로 반환하는 <code>ordinal()</code>이라는 메소드를 제공해준다. 그러나 ordinal을 사용하게 되면 나중에 유지보수에 문제가 발생하게 된다. (이 부분은 effective java item 35를 보면 자세히 나온다)</p>
+<p><strong>중간에 새로운 enum 요소가 끼어 드는 경우 새로운 요소 뒤에 위치한 enum들의 연산은 모두 망가지게 된다.</strong></p>
+<p>따라서 ordinal을 사용하는 것보다 차라리 위에서 만든 <code>Sequence</code> enum처럼 인스턴스 필드를 사용하여 int value를 담아두고 이를 return하는 getter를 사용하는것이 더 좋다.</p>
+<hr>
+<p>내가 java 에서 enum을 사용하는 방법은 이정도이다. 물론 더 다양 하게 사용하는 방법도 있다. (enum 내부에 또 enum을 정의해 사용한다던지, 좀 다른 이야기지만 EnumMap을 사용하는 방법도 있고) 그러나 이정도만 알아도 java enum 초보 티는 좀 벗었다고 할 수 있지 않을까?</p>
+<h1 id="끗"><a href="#끗" class="headerlink" title="끗."></a>끗.</h1>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Java/" rel="tag">Java</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20201127/java-swagger-ui-3-0-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/" data-tooltip="java-swagger-ui-3.0-사용하기" aria-label="PREVIOUS: java-swagger-ui-3.0-사용하기">
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20200430/Java-%EC%A0%95%EA%B7%9C%ED%91%9C%ED%98%84%EC%8B%9D%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%A0-%EB%95%8C-%EC%A3%BC%EC%9D%98%ED%95%A0-%EC%A0%90/" data-tooltip="Java 정규표현식을 사용할 때 주의할 점" aria-label="NEXT: Java 정규표현식을 사용할 때 주의할 점">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20200518/java-enum%EC%9D%84-%EB%A7%9B%EA%B9%94%EB%82%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4-%EB%B3%B4%EC%9E%90/" title="Share on Facebook" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20200518/java-enum%EC%9D%84-%EB%A7%9B%EA%B9%94%EB%82%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4-%EB%B3%B4%EC%9E%90/" title="Share on Twitter" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2021 shockshot@naver.com. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20201127/java-swagger-ui-3-0-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/" data-tooltip="java-swagger-ui-3.0-사용하기" aria-label="PREVIOUS: java-swagger-ui-3.0-사용하기">
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20200430/Java-%EC%A0%95%EA%B7%9C%ED%91%9C%ED%98%84%EC%8B%9D%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%A0-%EB%95%8C-%EC%A3%BC%EC%9D%98%ED%95%A0-%EC%A0%90/" data-tooltip="Java 정규표현식을 사용할 때 주의할 점" aria-label="NEXT: Java 정규표현식을 사용할 때 주의할 점">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20200518/java-enum%EC%9D%84-%EB%A7%9B%EA%B9%94%EB%82%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4-%EB%B3%B4%EC%9E%90/" title="Share on Facebook" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20200518/java-enum%EC%9D%84-%EB%A7%9B%EA%B9%94%EB%82%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4-%EB%B3%B4%EC%9E%90/" title="Share on Twitter" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="2">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20200518/java-enum%EC%9D%84-%EB%A7%9B%EA%B9%94%EB%82%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4-%EB%B3%B4%EC%9E%90/" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20200518/java-enum%EC%9D%84-%EB%A7%9B%EA%B9%94%EB%82%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4-%EB%B3%B4%EC%9E%90/" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <h4 id="about-card-name">shockshot@naver.com</h4>
+        
+            <div id="about-card-bio"><p>author.bio</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover2.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ofs4ykkzhow0axhilcw7ijqajqncd242ivjtsphmyhqoivownzrn8dpzz1yu.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://blog2.deliwind.com/20200518/java-enum%EC%9D%84-%EB%A7%9B%EA%B9%94%EB%82%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4-%EB%B3%B4%EC%9E%90/';
+              
+            this.page.identifier = '20200518/java-enum을-맛깔나게-사용해-보자/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'blog2deliwind';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

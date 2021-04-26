@@ -1,0 +1,478 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Deliwind">
+    <title>Big Sur - VSCode 터미널 끊김(랙) 해결방법 - Deliwind</title>
+    <link rel="canonical" href="https://blog2.deliwind.com/20201202/big-sur-vscode-터미널-끊김-랙-해결방법/">
+    <meta name="author" content="shockshot@naver.com">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"shockshot@naver.com","sameAs":["https://github.com/jeonghunkim85","mailto:shockshot@naver.com","https://blog.deliwind.com"],"image":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38"},"articleBody":"🧛🏻‍♀️ Big Sur 업데이트 하고요즘 개발자들 중 많은 수가 맥북을 사용할 것이다. 얼마전 Mac OS 11 - Big Sur 정식 버전이 release 되었고, 업데이트를 보면 참을수 없는 유혹을 느끼는 나는 그 소식을 듣자마자 바로! 그것도 업무용 컴퓨터에! 설치해버렸다.2~3년 전에는 Mac OS 업데이트 할때마다 버그도 많고 안정성도 예전같지 않아서 업데이트를 바로 설치하는 것을 꺼렸었는데, 근래에는 좀 나아진 모습을 보이는 것 같아서(어디까지나 주관적인 생각이다) 믿고 업데이트를 했다. 화사하고 iPad OS 같은 예쁜 모습에 만족도 잠시, 자잘한 버그들이 하나 둘 눈에 띄기 시작했다.\n🤮 VSCode 의 Terminal에서 랙이 생긴다다른 문제는 차치하고서라도, 회사에서 주로 쓰는 VSCode 사용시 터미널이 한번씩 반응을 멈췄다가 하는 문제였다. 처음에는 SpotLight 가 잡아먹는 cpu/ssd 부하가 좀 높은 편이길래 ‘아~ indexing 때문에 이렇게 버벅거리는구나…’ 했었지만, 며칠간 계속 써봐도 도통 나아질 기미가 보이지를 않았다. 사실 개발자는 검색을 얼마나 잘 하는지도 개발자의 실력 중 하나인데, 이런 부분은 어떻게 검색해야 하나 검색어부터 좀 난감해 하던 찰나, 이런 저런 검색어로 검색을 해보다 우연히 발견 했다.\n\n\n오.. 역시 외국에서도 비슷한 문제를 겪고 있는 사람들이 많구나~\nhttps://github.com/microsoft/vscode/issues/105446\n오픈된 이슈 글을 보면 대략적으로 23초~24초마다 한번씩 spike가 튄다고 돼있다.\n❓ 원인은?Big Sur의 문제인지 VSCode를 실행할때 사용하는 electron의 문제인지는 명확히 모른다. But, Big Sur 에서 서명된 electron 앱의 child process가 lock 된다는 글을 봤을땐 Big Sur와 electron, 그리고 signing의 문제인 듯 하다.\n👩🏻‍🔬 해결책은?여기 👈🏻\n1codesign --remove-signature /Applications/Visual\\ Studio\\ Code.app/Contents/Frameworks/Code\\ Helper\\ \\(Renderer\\).app\n\nMac OS 의 codesign 프로그램으로 사인을 제거해주면 일단 해결된다. 일렉트론이 버전 업 하면서 이 문제를 해결할지 어쩔지는 모르겠지만.. 일단 터미널에서 위 명령을 실행한 뒤 VSCode를 완전히 재시작 하면 터미널 랙에서는 완전히 해방됐다.\n\n","dateCreated":"2020-12-02T22:54:09+09:00","dateModified":"2021-01-03T00:14:05+09:00","datePublished":"2020-12-02T22:54:09+09:00","description":"","headline":"Big Sur - VSCode 터미널 끊김(랙) 해결방법","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/"},"publisher":{"@type":"Organization","name":"shockshot@naver.com","sameAs":["https://github.com/jeonghunkim85","mailto:shockshot@naver.com","https://blog.deliwind.com"],"image":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38","logo":{"@type":"ImageObject","url":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38"}},"url":"https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/","keywords":"Big Sur, VSCode"}</script>
+    <meta name="description" content="🧛🏻‍♀️ Big Sur 업데이트 하고요즘 개발자들 중 많은 수가 맥북을 사용할 것이다. 얼마전 Mac OS 11 - Big Sur 정식 버전이 release 되었고, 업데이트를 보면 참을수 없는 유혹을 느끼는 나는 그 소식을 듣자마자 바로! 그것도 업무용 컴퓨터에! 설치해버렸다.2~3년 전에는 Mac OS 업데이트 할때마다 버그도 많고 안정성도 예전같">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Big Sur - VSCode 터미널 끊김(랙) 해결방법">
+<meta property="og:url" content="https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/index.html">
+<meta property="og:site_name" content="Deliwind">
+<meta property="og:description" content="🧛🏻‍♀️ Big Sur 업데이트 하고요즘 개발자들 중 많은 수가 맥북을 사용할 것이다. 얼마전 Mac OS 11 - Big Sur 정식 버전이 release 되었고, 업데이트를 보면 참을수 없는 유혹을 느끼는 나는 그 소식을 듣자마자 바로! 그것도 업무용 컴퓨터에! 설치해버렸다.2~3년 전에는 Mac OS 업데이트 할때마다 버그도 많고 안정성도 예전같">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/image1.png">
+<meta property="og:image" content="https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/image2.jpg">
+<meta property="article:published_time" content="2020-12-02T13:54:09.000Z">
+<meta property="article:modified_time" content="2021-01-02T15:14:05.083Z">
+<meta property="article:author" content="shockshot@naver.com">
+<meta property="article:tag" content="Big Sur">
+<meta property="article:tag" content="VSCode">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/image1.png">
+    
+    
+        
+    
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-kvpycffeiaxsbgvbkdhwiqlinu750trh6s9bqthsefrjo7rf1q2lj1oqxj7d.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-159338205-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-159338205-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+
+<header id="header" data-behavior="2">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/%20" aria-label>
+            Deliwind
+        </a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about" aria-label="Open the link: /#about">
+        
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+<nav id="sidebar" data-behavior="2">
+    <div class="sidebar-container">
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/" rel="noopener" title="Home">
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" rel="noopener" title="Categories">
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" rel="noopener" title="Tags">
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-archives" rel="noopener" title="Archives">
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" rel="noopener" title="Search">
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" rel="noopener" title="About">
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/jeonghunkim85" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:shockshot@naver.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://blog.deliwind.com" target="_blank" rel="noopener" title="Another blog">
+                        <i class="sidebar-button-icon fa fa-blog" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Another blog</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="2" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Big Sur - VSCode 터미널 끊김(랙) 해결방법
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-12-02T22:54:09+09:00">
+	
+		    Dec 02, 2020
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h2 id="🧛🏻‍♀️-Big-Sur-업데이트-하고"><a href="#🧛🏻‍♀️-Big-Sur-업데이트-하고" class="headerlink" title="🧛🏻‍♀️ Big Sur 업데이트 하고"></a>🧛🏻‍♀️ Big Sur 업데이트 하고</h2><p>요즘 개발자들 중 많은 수가 맥북을 사용할 것이다. 얼마전 Mac OS 11 - Big Sur 정식 버전이 release 되었고, 업데이트를 보면 참을수 없는 유혹을 느끼는 나는 그 소식을 듣자마자 바로! 그것도 업무용 컴퓨터에! 설치해버렸다.<br>2~3년 전에는 Mac OS 업데이트 할때마다 버그도 많고 안정성도 예전같지 않아서 업데이트를 바로 설치하는 것을 꺼렸었는데, 근래에는 좀 나아진 모습을 보이는 것 같아서(어디까지나 주관적인 생각이다) 믿고 업데이트를 했다. 화사하고 iPad OS 같은 예쁜 모습에 만족도 잠시, 자잘한 버그들이 하나 둘 눈에 띄기 시작했다.</p>
+<h2 id="🤮-VSCode-의-Terminal에서-랙이-생긴다"><a href="#🤮-VSCode-의-Terminal에서-랙이-생긴다" class="headerlink" title="🤮 VSCode 의 Terminal에서 랙이 생긴다"></a>🤮 VSCode 의 Terminal에서 랙이 생긴다</h2><p>다른 문제는 차치하고서라도, 회사에서 주로 쓰는 VSCode 사용시 터미널이 한번씩 반응을 멈췄다가 하는 문제였다. 처음에는 SpotLight 가 잡아먹는 cpu/ssd 부하가 좀 높은 편이길래 ‘아~ indexing 때문에 이렇게 버벅거리는구나…’ 했었지만, 며칠간 계속 써봐도 도통 나아질 기미가 보이지를 않았다. 사실 개발자는 검색을 얼마나 잘 하는지도 개발자의 실력 중 하나인데, 이런 부분은 어떻게 검색해야 하나 검색어부터 좀 난감해 하던 찰나, 이런 저런 검색어로 검색을 해보다 우연히 발견 했다.</p>
+<img src="/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/image1.png" class title="big_sur_vscode_terminal_lag">
+
+<p>오.. 역시 외국에서도 비슷한 문제를 겪고 있는 사람들이 많구나~</p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/microsoft/vscode/issues/105446">https://github.com/microsoft/vscode/issues/105446</a></p>
+<p>오픈된 이슈 글을 보면 대략적으로 23초~24초마다 한번씩 spike가 튄다고 돼있다.</p>
+<h2 id="❓-원인은"><a href="#❓-원인은" class="headerlink" title="❓ 원인은?"></a>❓ 원인은?</h2><p>Big Sur의 문제인지 VSCode를 실행할때 사용하는 electron의 문제인지는 명확히 모른다. But, <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/electron/electron/issues/26143">Big Sur 에서 서명된 electron 앱의 child process가 lock 된다는 글</a>을 봤을땐 Big Sur와 electron, 그리고 signing의 문제인 듯 하다.</p>
+<h2 id="👩🏻‍🔬-해결책은"><a href="#👩🏻‍🔬-해결책은" class="headerlink" title="👩🏻‍🔬 해결책은?"></a>👩🏻‍🔬 해결책은?</h2><p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/microsoft/vscode/issues/105446#issuecomment-722264044">여기</a> 👈🏻</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Frameworks/Code\ Helper\ \(Renderer\).app</span><br></pre></td></tr></table></figure>
+
+<p>Mac OS 의 codesign 프로그램으로 사인을 제거해주면 일단 해결된다. 일렉트론이 버전 업 하면서 이 문제를 해결할지 어쩔지는 모르겠지만.. 일단 터미널에서 위 명령을 실행한 뒤 <strong>VSCode를 완전히 재시작</strong> 하면 터미널 랙에서는 완전히 해방됐다.</p>
+<img src="/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/image2.jpg" class title="problem_solved!">
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Big-Sur/" rel="tag">Big Sur</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/VSCode/" rel="tag">VSCode</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled" aria-hidden="true">
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20201127/java-swagger-ui-3-0-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/" data-tooltip="java-swagger-ui-3.0-사용하기" aria-label="NEXT: java-swagger-ui-3.0-사용하기">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/" title="Share on Facebook" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/" title="Share on Twitter" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2021 shockshot@naver.com. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled" aria-hidden="true">
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20201127/java-swagger-ui-3-0-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/" data-tooltip="java-swagger-ui-3.0-사용하기" aria-label="NEXT: java-swagger-ui-3.0-사용하기">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/" title="Share on Facebook" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/" title="Share on Twitter" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="2">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <h4 id="about-card-name">shockshot@naver.com</h4>
+        
+            <div id="about-card-bio"><p>author.bio</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover2.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ofs4ykkzhow0axhilcw7ijqajqncd242ivjtsphmyhqoivownzrn8dpzz1yu.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://blog2.deliwind.com/20201202/Big-Sur-VSCode-%ED%84%B0%EB%AF%B8%EB%84%90-%EB%81%8A%EA%B9%80-%EB%9E%99-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95/';
+              
+            this.page.identifier = '20201202/Big-Sur-VSCode-터미널-끊김-랙-해결방법/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'blog2deliwind';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

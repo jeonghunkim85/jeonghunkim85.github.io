@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://blog2.deliwind.com/sitemap.xml

@@ -1,0 +1,510 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Deliwind">
+    <title>VueJS 에서 Typescript로 개발하기 4 - Deliwind</title>
+    <link rel="canonical" href="https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/">
+    <meta name="author" content="shockshot@naver.com">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"shockshot@naver.com","sameAs":["https://github.com/jeonghunkim85","mailto:shockshot@naver.com","https://blog.deliwind.com"],"image":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38"},"articleBody":"VuexVueJS를 사용하면서 상태를 관리하는 대표적인 방법은 Vuex를 사용하는 방법이 있습니다.(Vue에서 공식적으로 추천하는 상태관리 라이브러리 이기도 합니다.) 이번 포스트에서는 Vuex를 Typescript 적인 방법으로 사용하는 방법에 대해서 작성하도록 하겠습니다.\nVuex에 대한 사전 지식은 공식사이트에 자세히 설명이 되어 있습니다. (한글로 말이죠..)그러나 이곳에 나와있는 방법으로는 Typescript와는 무엇인가 입맛에 잘 맞지 않습니다.\n우리는 vuex를 클래스 형태로 만들어서 사용하기로 합시다.\nvue-cli를 통해 프로젝트를 생성 하면서 vuex를 선택하게 되면 src/store.ts 라는 파일에 store 가 정의가 됩니다.\n\n\n우리는 이 store.ts 파일을 지우고, stores 폴더를 만들어 store를 각각 namesapce 별로 모듈화 하여 분리하고, 각각의 스토어 모듈은 클래스 형태로 정의해서 쓰도록 합시다.\n이를 위해 우리는 vuex-module-decorators 와 vuex-class 라는 라이브러리를 사용합니다.\n터미널에서 yarn add 명령어를 통해 라이브러리를 추가해 줍니다.\n12yarn add vuex-module-decoratorsyarn add vuex-class\n\nsrc 폴더 하단에 stores 폴더를 만들고, index.ts 파일을 새로 생성합니다.\n그리고 기존 store.ts파일을 import 하고 있던 main.ts 파일을 열어 아래와 같이 바꿉니다.\n123456789101112import Vue from &#39;vue&#39;;import App from &#39;.&#x2F;App.vue&#39;;import router from &#39;.&#x2F;router&#39;;import store from &#39;.&#x2F;stores&#39;; &#x2F;&#x2F;이부분.&#39;.&#x2F;store&#39; -&gt; &#39;.&#x2F;stores&#39;Vue.config.productionTip &#x3D; false;new Vue(&#123;  router,  store,  render: (h) &#x3D;&gt; h(App),&#125;).$mount(&#39;#app&#39;);\n\n그리고 /src/stores/index.ts 파일을 열어 아래와 같이 내용을 넣습니다.\n12345678910import Vue from &#39;vue&#39;;import Vuex from &#39;vuex&#39;;Vue.use(Vuex);export default new Vuex.Store(&#123;  modules: &#123;  &#125;,&#125;);\n\n기본적인 틀은 셋팅이 끝났습니다. 우리는 이제 원하는대로 클래스 스타일 스토어 모듈을 작성하고 modules 밑에 넣어주기만 하면 됩니다.\nStore 모듈 생성/src/stores/CountStore.ts 파일을 만들고 아래 내용을 넣습니다.\n12345678910111213141516171819202122232425262728import &#123; Module, VuexModule, Mutation, Action &#125; from &#39;vuex-module-decorators&#39;;@Module(&#123;namespaced: true&#125;)export default class CountStore extends VuexModule &#123;  &#x2F;&#x2F; states  public count: number &#x3D; 0;  &#x2F;&#x2F; getters  get doubledCount() &#123;    return this.count * 2;  &#125;  &#x2F;&#x2F; mutations  @Mutation  public increment(delta: number) &#123;    console.log(&#96;increment mutation: $&#123;delta&#125;&#96;);    this.count +&#x3D; delta;  &#125;  &#x2F;&#x2F; actions  @Action(&#123; commit: &#39;increment&#39; &#125;)  public incr(delta: number) &#123;    console.log(&#96;increment action: $&#123;delta&#125;&#96;);    return delta;  &#125;&#125;\nstate, getter, mutation, action 들은 위와 같은 형식으로 적용하여 사용합니다. 컴포넌트에서 incr 액션함수를 호출하면, 함수가 return 하는 delta라는 값으로 increment mutation을 commit 하게 됩니다. 설명이 약간 어설픈데요, 결국 위에 선언한 incr 이라는 이름의 Action 은 아래 코드와 동일합니다. (namespace를 사용하지 않으려면 @Module 데코레이터의 내용을 빼고 작성합니다.)\n12345actions: &#123;  incr: (context: any, delta: number) &#x3D;&gt; &#123;    context.commit(&#39;increment&#39;, delta);  &#125;,&#125;\n\n/src/stores/index.ts 파일을 열어 방금 만든 CountStore 모듈을 추가하는 구문을 넣어줍니다.\n1234567891011import Vue from &#39;vue&#39;;import Vuex from &#39;vuex&#39;;import CountStore from &#39;.&#x2F;CountStore&#39;;Vue.use(Vuex);export default new Vuex.Store(&#123;  modules: &#123;    CountStore,  &#125;,&#125;);\n\n이제 우리는 CountStore 라는 StoreModule을 완성했습니다.이제는 우리가 원하는 컴포넌트에서 CountStore를 연결하여 사용할 차례입니다.\nHome.vue 파일을 열어 아래와 같이 바꿔줍니다.\n123456789101112131415161718192021222324252627&lt;template&gt;  &lt;div class&#x3D;&quot;home&quot;&gt;    &lt;p&gt;&#123;&#123;count&#125;&#125; * 2 &#x3D; &#123;&#123;doubledCount&#125;&#125;&lt;&#x2F;p&gt;    &lt;button @click&#x3D;&quot;incr(1)&quot;&gt;incr&lt;&#x2F;button&gt;  &lt;&#x2F;div&gt;&lt;&#x2F;template&gt;&lt;script lang&#x3D;&quot;ts&quot;&gt;import &#123; Component, Vue, Watch &#125; from &#39;vue-property-decorator&#39;;import &#123; namespace, State, Action, Getter &#125; from &#39;vuex-class&#39;;const CountStoreModule &#x3D; namespace(&#39;CountStore&#39;);@Componentexport default class Home extends Vue &#123;  @CountStoreModule.State(&#39;count&#39;)  private count!: number;  @CountStoreModule.Getter(&#39;doubledCount&#39;)  private doubledCount!: number;  @CountStoreModule.Action(&#39;incr&#39;)  private incr!: (delta: number) &#x3D;&gt; void;&#125;&lt;&#x2F;script&gt;\n\nCountStoreModule을 namespace를 통해 연결하고, state와 getter를 통해 상태값을 가져와 화면에 바인딩 합니다. 그리고 버튼을 incr 액션 생성함수와 연결 해줍니다.\n\n\n잘 작동하는 것을 확인할 수 있습니다.\n이 외에 async를 활용한 @MutationAction도 있습니다. 이에 대한 상세한 설명은vuex-module-decorators github 페이지를 참조하시기 바랍니다.\n부족한 글 읽어주셔서 감사합니다.\n","dateCreated":"2018-12-07T20:19:31+09:00","dateModified":"2021-01-03T00:14:05+09:00","datePublished":"2018-12-07T20:19:31+09:00","description":"","headline":"VueJS 에서 Typescript로 개발하기 4","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/"},"publisher":{"@type":"Organization","name":"shockshot@naver.com","sameAs":["https://github.com/jeonghunkim85","mailto:shockshot@naver.com","https://blog.deliwind.com"],"image":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38","logo":{"@type":"ImageObject","url":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38"}},"url":"https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/","keywords":"VueJS, TypeScript"}</script>
+    <meta name="description" content="VuexVueJS를 사용하면서 상태를 관리하는 대표적인 방법은 Vuex를 사용하는 방법이 있습니다.(Vue에서 공식적으로 추천하는 상태관리 라이브러리 이기도 합니다.) 이번 포스트에서는 Vuex를 Typescript 적인 방법으로 사용하는 방법에 대해서 작성하도록 하겠습니다. Vuex에 대한 사전 지식은 공식사이트에 자세히 설명이 되어 있습니다. (한글로">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="VueJS 에서 Typescript로 개발하기 4">
+<meta property="og:url" content="https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/index.html">
+<meta property="og:site_name" content="Deliwind">
+<meta property="og:description" content="VuexVueJS를 사용하면서 상태를 관리하는 대표적인 방법은 Vuex를 사용하는 방법이 있습니다.(Vue에서 공식적으로 추천하는 상태관리 라이브러리 이기도 합니다.) 이번 포스트에서는 Vuex를 Typescript 적인 방법으로 사용하는 방법에 대해서 작성하도록 하겠습니다. Vuex에 대한 사전 지식은 공식사이트에 자세히 설명이 되어 있습니다. (한글로">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/1.png">
+<meta property="og:image" content="https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/2.png">
+<meta property="article:published_time" content="2018-12-07T11:19:31.000Z">
+<meta property="article:modified_time" content="2021-01-02T15:14:05.113Z">
+<meta property="article:author" content="shockshot@naver.com">
+<meta property="article:tag" content="VueJS">
+<meta property="article:tag" content="TypeScript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/1.png">
+    
+    
+        
+    
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-kvpycffeiaxsbgvbkdhwiqlinu750trh6s9bqthsefrjo7rf1q2lj1oqxj7d.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-159338205-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-159338205-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+
+<header id="header" data-behavior="2">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/%20" aria-label>
+            Deliwind
+        </a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about" aria-label="Open the link: /#about">
+        
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+<nav id="sidebar" data-behavior="2">
+    <div class="sidebar-container">
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/" rel="noopener" title="Home">
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" rel="noopener" title="Categories">
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" rel="noopener" title="Tags">
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-archives" rel="noopener" title="Archives">
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" rel="noopener" title="Search">
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" rel="noopener" title="About">
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/jeonghunkim85" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:shockshot@naver.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://blog.deliwind.com" target="_blank" rel="noopener" title="Another blog">
+                        <i class="sidebar-button-icon fa fa-blog" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Another blog</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="2" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            VueJS 에서 Typescript로 개발하기 4
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2018-12-07T20:19:31+09:00">
+	
+		    Dec 07, 2018
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Front-end-VueJS/">Front-end - VueJS</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h2 id="Vuex"><a href="#Vuex" class="headerlink" title="Vuex"></a>Vuex</h2><p>VueJS를 사용하면서 상태를 관리하는 대표적인 방법은 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://vuex.vuejs.org/kr/">Vuex</a>를 사용하는 방법이 있습니다.(Vue에서 공식적으로 추천하는 상태관리 라이브러리 이기도 합니다.) 이번 포스트에서는 Vuex를 Typescript 적인 방법으로 사용하는 방법에 대해서 작성하도록 하겠습니다.</p>
+<p>Vuex에 대한 사전 지식은 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://vuex.vuejs.org/kr/">공식사이트</a>에 자세히 설명이 되어 있습니다. (한글로 말이죠..)<br>그러나 이곳에 나와있는 방법으로는 Typescript와는 무엇인가 입맛에 잘 맞지 않습니다.</p>
+<p>우리는 vuex를 클래스 형태로 만들어서 사용하기로 합시다.</p>
+<p>vue-cli를 통해 프로젝트를 생성 하면서 vuex를 선택하게 되면 src/store.ts 라는 파일에 store 가 정의가 됩니다.</p>
+<img src="/20181207/frontend-vue-typescript-4/1.png" class title="사진1">
+
+<p>우리는 이 store.ts 파일을 지우고, stores 폴더를 만들어 store를 각각 namesapce 별로 모듈화 하여 분리하고, 각각의 스토어 모듈은 클래스 형태로 정의해서 쓰도록 합시다.</p>
+<p>이를 위해 우리는 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/championswimmer/vuex-module-decorators">vuex-module-decorators</a> 와 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/ktsn/vuex-class">vuex-class</a> 라는 라이브러리를 사용합니다.</p>
+<p>터미널에서 yarn add 명령어를 통해 라이브러리를 추가해 줍니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn add vuex-module-decorators</span><br><span class="line">yarn add vuex-class</span><br></pre></td></tr></table></figure>
+
+<p>src 폴더 하단에 stores 폴더를 만들고, index.ts 파일을 새로 생성합니다.</p>
+<p>그리고 기존 store.ts파일을 import 하고 있던 main.ts 파일을 열어 아래와 같이 바꿉니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import Vue from &#39;vue&#39;;</span><br><span class="line">import App from &#39;.&#x2F;App.vue&#39;;</span><br><span class="line">import router from &#39;.&#x2F;router&#39;;</span><br><span class="line">import store from &#39;.&#x2F;stores&#39;; &#x2F;&#x2F;이부분.&#39;.&#x2F;store&#39; -&gt; &#39;.&#x2F;stores&#39;</span><br><span class="line"></span><br><span class="line">Vue.config.productionTip &#x3D; false;</span><br><span class="line"></span><br><span class="line">new Vue(&#123;</span><br><span class="line">  router,</span><br><span class="line">  store,</span><br><span class="line">  render: (h) &#x3D;&gt; h(App),</span><br><span class="line">&#125;).$mount(&#39;#app&#39;);</span><br></pre></td></tr></table></figure>
+
+<p>그리고 /src/stores/index.ts 파일을 열어 아래와 같이 내용을 넣습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import Vue from &#39;vue&#39;;</span><br><span class="line">import Vuex from &#39;vuex&#39;;</span><br><span class="line"></span><br><span class="line">Vue.use(Vuex);</span><br><span class="line"></span><br><span class="line">export default new Vuex.Store(&#123;</span><br><span class="line">  modules: &#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>기본적인 틀은 셋팅이 끝났습니다. 우리는 이제 원하는대로 클래스 스타일 스토어 모듈을 작성하고 modules 밑에 넣어주기만 하면 됩니다.</p>
+<h2 id="Store-모듈-생성"><a href="#Store-모듈-생성" class="headerlink" title="Store 모듈 생성"></a>Store 모듈 생성</h2><p>/src/stores/CountStore.ts 파일을 만들고 아래 내용을 넣습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">import &#123; Module, VuexModule, Mutation, Action &#125; from &#39;vuex-module-decorators&#39;;</span><br><span class="line"></span><br><span class="line">@Module(&#123;namespaced: true&#125;)</span><br><span class="line">export default class CountStore extends VuexModule &#123;</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; states</span><br><span class="line">  public count: number &#x3D; 0;</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; getters</span><br><span class="line">  get doubledCount() &#123;</span><br><span class="line">    return this.count * 2;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; mutations</span><br><span class="line">  @Mutation</span><br><span class="line">  public increment(delta: number) &#123;</span><br><span class="line">    console.log(&#96;increment mutation: $&#123;delta&#125;&#96;);</span><br><span class="line">    this.count +&#x3D; delta;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; actions</span><br><span class="line">  @Action(&#123; commit: &#39;increment&#39; &#125;)</span><br><span class="line">  public incr(delta: number) &#123;</span><br><span class="line">    console.log(&#96;increment action: $&#123;delta&#125;&#96;);</span><br><span class="line">    return delta;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>state, getter, mutation, action 들은 위와 같은 형식으로 적용하여 사용합니다. 컴포넌트에서 incr 액션함수를 호출하면, 함수가 return 하는 delta라는 값으로 increment mutation을 commit 하게 됩니다. 설명이 약간 어설픈데요, 결국 위에 선언한 incr 이라는 이름의 Action 은 아래 코드와 동일합니다. (namespace를 사용하지 않으려면 @Module 데코레이터의 내용을 빼고 작성합니다.)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">actions: &#123;</span><br><span class="line">  incr: (context: any, delta: number) &#x3D;&gt; &#123;</span><br><span class="line">    context.commit(&#39;increment&#39;, delta);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>/src/stores/index.ts 파일을 열어 방금 만든 CountStore 모듈을 추가하는 구문을 넣어줍니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">import Vue from &#39;vue&#39;;</span><br><span class="line">import Vuex from &#39;vuex&#39;;</span><br><span class="line">import CountStore from &#39;.&#x2F;CountStore&#39;;</span><br><span class="line"></span><br><span class="line">Vue.use(Vuex);</span><br><span class="line"></span><br><span class="line">export default new Vuex.Store(&#123;</span><br><span class="line">  modules: &#123;</span><br><span class="line">    CountStore,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>이제 우리는 CountStore 라는 StoreModule을 완성했습니다.<br>이제는 우리가 원하는 컴포넌트에서 CountStore를 연결하여 사용할 차례입니다.</p>
+<p>Home.vue 파일을 열어 아래와 같이 바꿔줍니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class&#x3D;&quot;home&quot;&gt;</span><br><span class="line">    &lt;p&gt;&#123;&#123;count&#125;&#125; * 2 &#x3D; &#123;&#123;doubledCount&#125;&#125;&lt;&#x2F;p&gt;</span><br><span class="line">    &lt;button @click&#x3D;&quot;incr(1)&quot;&gt;incr&lt;&#x2F;button&gt;</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script lang&#x3D;&quot;ts&quot;&gt;</span><br><span class="line">import &#123; Component, Vue, Watch &#125; from &#39;vue-property-decorator&#39;;</span><br><span class="line">import &#123; namespace, State, Action, Getter &#125; from &#39;vuex-class&#39;;</span><br><span class="line"></span><br><span class="line">const CountStoreModule &#x3D; namespace(&#39;CountStore&#39;);</span><br><span class="line"></span><br><span class="line">@Component</span><br><span class="line">export default class Home extends Vue &#123;</span><br><span class="line"></span><br><span class="line">  @CountStoreModule.State(&#39;count&#39;)</span><br><span class="line">  private count!: number;</span><br><span class="line"></span><br><span class="line">  @CountStoreModule.Getter(&#39;doubledCount&#39;)</span><br><span class="line">  private doubledCount!: number;</span><br><span class="line"></span><br><span class="line">  @CountStoreModule.Action(&#39;incr&#39;)</span><br><span class="line">  private incr!: (delta: number) &#x3D;&gt; void;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>CountStoreModule을 namespace를 통해 연결하고, state와 getter를 통해 상태값을 가져와 화면에 바인딩 합니다. 그리고 버튼을 incr 액션 생성함수와 연결 해줍니다.</p>
+<img src="/20181207/frontend-vue-typescript-4/2.png" class title="사진2">
+
+<p>잘 작동하는 것을 확인할 수 있습니다.</p>
+<p>이 외에 async를 활용한 @MutationAction도 있습니다. 이에 대한 상세한 설명은<br><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/championswimmer/vuex-module-decorators">vuex-module-decorators</a> github 페이지를 참조하시기 바랍니다.</p>
+<p>부족한 글 읽어주셔서 감사합니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/TypeScript/" rel="tag">TypeScript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/VueJS/" rel="tag">VueJS</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20181221/frontend-vue-typescript-5/" data-tooltip="VueJS 에서 Typescript로 개발하기 5" aria-label="PREVIOUS: VueJS 에서 Typescript로 개발하기 5">
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20181123/frontend-vue-typescript-3/" data-tooltip="VueJS 에서 Typescript로 개발하기 3" aria-label="NEXT: VueJS 에서 Typescript로 개발하기 3">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/" title="Share on Facebook" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/" title="Share on Twitter" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2021 shockshot@naver.com. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20181221/frontend-vue-typescript-5/" data-tooltip="VueJS 에서 Typescript로 개발하기 5" aria-label="PREVIOUS: VueJS 에서 Typescript로 개발하기 5">
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20181123/frontend-vue-typescript-3/" data-tooltip="VueJS 에서 Typescript로 개발하기 3" aria-label="NEXT: VueJS 에서 Typescript로 개발하기 3">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/" title="Share on Facebook" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/" title="Share on Twitter" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="2">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <h4 id="about-card-name">shockshot@naver.com</h4>
+        
+            <div id="about-card-bio"><p>author.bio</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover2.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ofs4ykkzhow0axhilcw7ijqajqncd242ivjtsphmyhqoivownzrn8dpzz1yu.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://blog2.deliwind.com/20181207/frontend-vue-typescript-4/';
+              
+            this.page.identifier = '20181207/frontend-vue-typescript-4/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'blog2deliwind';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

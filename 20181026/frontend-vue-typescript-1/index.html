@@ -1,0 +1,538 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Deliwind">
+    <title>VueJS 에서 Typescript로 개발하기 1 - Deliwind</title>
+    <link rel="canonical" href="https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/">
+    <meta name="author" content="shockshot@naver.com">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"shockshot@naver.com","sameAs":["https://github.com/jeonghunkim85","mailto:shockshot@naver.com","https://blog.deliwind.com"],"image":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38"},"articleBody":"Typescript로 VueJS 프로젝트를 사용하는 방법을 알아봅니다.\nWhy Typescript?왜 Typescript를 사용하느냐? 는 질문은, Typescript의 장점에 대해 구글링 해보면 많이 나오니, 두줄 정도로만 작성하겠습니다.\n\n자동완성을 통한 생산성 향상\n컴파일 레벨에서의 타입오류 검출로 인한 생산성 향상\n\n물론, Typescript를 사용하면, 문법이 좀 더 장황해져서 타이핑이 늘어난다는 단점이 있겠으나, 위의 장점들이 이를 상쇄한다고 생각합니다.Typescript를 사용하는 이유에 대해서는 훌륭한 글들이 많으니 참고하시면 좋을 것 같습니다.\n\n타입스크립트, 써야할까?\n우리가 Typescript를 선택한 이유\n\n사전 준비pc 또는 mac에 nodejs와 npm이 설치 되어 있다는 전제 하에 진행합니다.\nvue-cli 2 버전대에서는 Typescript를 지원하지 않았지만, 3버전대로 업그레이드 되면서, Typescript를 공식적으로 지원하기 시작했습니다.\n기존에는 프로젝트 생성 후 수동으로 Typescript에 맞게 꾸며야만 했으나, vue cli 3 버전부터는 프로젝트 생성 시 옵션을 통하여 Typescript를 선택할 수 있어 많이 편해졌습니다.\n터미널 (또는 CMD)창을 열어 아래 명령어를 입력하여 vue-cli를 설치 해 줍니다.\n1npm install -g @vue&#x2F;cli\n이제 간단히 vue cli 설치가 끝났습니다.\nnpm을 대신할 패키지 매니저 yarn도 설치 해줍니다.(npm을 사용하실 분들은 설치하지 않으셔도 됩니다.)\n1npm install -g yarn\n이제 콘솔에서 vue 명령어를 통해 vue cli를 호출할 수 있습니다.\n1vue --version\n글 작성 시점의 최신 버전은 3.2.1이네요.\nvue cli를 통해 프로젝트 생성vue-cli를 통해 프로젝트를 생성하는것은 아주 쉽습니다.\n터미널을 열고\n1vue ui\n를 입력하여 브라우저를 통한 gui화면을 통해 뷰 프로젝트를 생성하고 관리할 수도 있습니다.\n그러나, 터미널이 더 편한 개발자들도 많을 것 같습니다.(속도도 더 빠르구요..)\n1vue create test-typescript-project\n터미널에서 위 명령어를 입력합니다.\n\n\ndefault(babel, eslint) 와 Manually select features 를 선택할 수 있습니다. 우리는 typescript를 사용할 것이기 때문에 Manually select features를 선택합니다.\n선택한 후 프로젝트 구성에 맞는 옵션을 선택 합니다.\n\n\n이번 샘플 프로젝트에서는 Babel, Typescript, Router, Vuex, CSS Pre-processors, Linter/Formatter만 선택하고 진행합니다.(Unit Test나 E2E Testing은 제외합니다. 언제든 추후에 추가할 수 있습니다.)\nbabel은 js를 컴파일 하기 위한 녀석이라고 보면 되고, 두번째, Typescript가 핵심입니다.\nRouter는 라우팅 경로를 컨트롤하기 위한 vue 플러그인, Vuex는 상태관리를 위한 vue 플러그인이고,\nCSS Pre-processors는 SCSS를 사용하기 위함, Linter/Formatter는 문법 검사 하는 녀석이라고 생각하면 됩니다. (더이상의 자세한 설명은 생략한다)\n옵션들을 선택하고 Enter를 누르면, 아래와 같은 질문을 만나게 됩니다.\n\n\n아래 첨부한 그림과 같이 선택해 줍니다.\n\n\n모두 선택 한 후 또다시 Enter!!!\n조금 기다린 후에, 아래와 같이 프로젝트가 완성 되었다는 메세지를 만날 수 있습니다.\n\n\n터미널 하단에 성공적으로 프로젝트가 생성되었다는 메세지와 함께, 테스트 해볼 수 있는 명령어를 예시로 들어줍니다.\n터미널에 그대로 입력해 봅니다.로컬 개발 서버가 구동됩니다.\n12cd test-typescript-projectyarn serve\n\n\n\n성공적으로 컴파일 되었다는 메세지와 함께브라우저로 개발서버에 접속해 볼 수 있는 주소가 표시됩니다.\n\n\n잘 작동되는것을 확인해 볼 수 있습니다.\n다음 포스트에서는 대략적인 폴더 구조와 컴포넌트 구성을 해보겠습니다.감사합니다.\n","dateCreated":"2018-10-26T20:00:00+09:00","dateModified":"2021-01-03T00:14:05+09:00","datePublished":"2018-10-26T20:00:00+09:00","description":"","headline":"VueJS 에서 Typescript로 개발하기 1","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/"},"publisher":{"@type":"Organization","name":"shockshot@naver.com","sameAs":["https://github.com/jeonghunkim85","mailto:shockshot@naver.com","https://blog.deliwind.com"],"image":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38","logo":{"@type":"ImageObject","url":"https://www.gravatar.com/avatar/bf94ecf4590683099a49861bee454d38"}},"url":"https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/","keywords":"VueJS, TypeScript"}</script>
+    <meta name="description" content="Typescript로 VueJS 프로젝트를 사용하는 방법을 알아봅니다. Why Typescript?왜 Typescript를 사용하느냐? 는 질문은, Typescript의 장점에 대해 구글링 해보면 많이 나오니, 두줄 정도로만 작성하겠습니다.  자동완성을 통한 생산성 향상 컴파일 레벨에서의 타입오류 검출로 인한 생산성 향상  물론, Typescript를 사용">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="VueJS 에서 Typescript로 개발하기 1">
+<meta property="og:url" content="https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/index.html">
+<meta property="og:site_name" content="Deliwind">
+<meta property="og:description" content="Typescript로 VueJS 프로젝트를 사용하는 방법을 알아봅니다. Why Typescript?왜 Typescript를 사용하느냐? 는 질문은, Typescript의 장점에 대해 구글링 해보면 많이 나오니, 두줄 정도로만 작성하겠습니다.  자동완성을 통한 생산성 향상 컴파일 레벨에서의 타입오류 검출로 인한 생산성 향상  물론, Typescript를 사용">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/1.png">
+<meta property="og:image" content="https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/2.png">
+<meta property="og:image" content="https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/3.png">
+<meta property="og:image" content="https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/4.png">
+<meta property="og:image" content="https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/5.png">
+<meta property="og:image" content="https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/6.png">
+<meta property="og:image" content="https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/7.png">
+<meta property="article:published_time" content="2018-10-26T11:00:00.000Z">
+<meta property="article:modified_time" content="2021-01-02T15:14:05.085Z">
+<meta property="article:author" content="shockshot@naver.com">
+<meta property="article:tag" content="VueJS">
+<meta property="article:tag" content="TypeScript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/1.png">
+    
+    
+        
+    
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-kvpycffeiaxsbgvbkdhwiqlinu750trh6s9bqthsefrjo7rf1q2lj1oqxj7d.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-159338205-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-159338205-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+
+<header id="header" data-behavior="2">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/%20" aria-label>
+            Deliwind
+        </a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about" aria-label="Open the link: /#about">
+        
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+<nav id="sidebar" data-behavior="2">
+    <div class="sidebar-container">
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/" rel="noopener" title="Home">
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" rel="noopener" title="Categories">
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" rel="noopener" title="Tags">
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-archives" rel="noopener" title="Archives">
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" rel="noopener" title="Search">
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" rel="noopener" title="About">
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/jeonghunkim85" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:shockshot@naver.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://blog.deliwind.com" target="_blank" rel="noopener" title="Another blog">
+                        <i class="sidebar-button-icon fa fa-blog" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Another blog</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="2" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            VueJS 에서 Typescript로 개발하기 1
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2018-10-26T20:00:00+09:00">
+	
+		    Oct 26, 2018
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Front-end-VueJS/">Front-end - VueJS</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>Typescript로 VueJS 프로젝트를 사용하는 방법을 알아봅니다.</p>
+<h2 id="Why-Typescript"><a href="#Why-Typescript" class="headerlink" title="Why Typescript?"></a>Why Typescript?</h2><p>왜 Typescript를 사용하느냐? 는 질문은, Typescript의 장점에 대해 구글링 해보면 많이 나오니, 두줄 정도로만 작성하겠습니다.</p>
+<ul>
+<li>자동완성을 통한 생산성 향상</li>
+<li>컴파일 레벨에서의 타입오류 검출로 인한 생산성 향상</li>
+</ul>
+<p>물론, Typescript를 사용하면, 문법이 좀 더 장황해져서 타이핑이 늘어난다는 단점이 있겠으나, 위의 장점들이 이를 상쇄한다고 생각합니다.<br>Typescript를 사용하는 이유에 대해서는 훌륭한 글들이 많으니 참고하시면 좋을 것 같습니다.</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://hyunseob.github.io/2018/08/12/do-you-need-to-use-ts/">타입스크립트, 써야할까?</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://medium.com/@constell99/%EC%9A%B0%EB%A6%AC%EA%B0%80-typescript%EB%A5%BC-%EC%84%A0%ED%83%9D%ED%95%9C-%EC%9D%B4%EC%9C%A0-b0a423654f1e">우리가 Typescript를 선택한 이유</a></li>
+</ul>
+<h2 id="사전-준비"><a href="#사전-준비" class="headerlink" title="사전 준비"></a>사전 준비</h2><p>pc 또는 mac에 nodejs와 npm이 설치 되어 있다는 전제 하에 진행합니다.</p>
+<p>vue-cli 2 버전대에서는 Typescript를 지원하지 않았지만, 3버전대로 업그레이드 되면서, Typescript를 공식적으로 지원하기 시작했습니다.</p>
+<p>기존에는 프로젝트 생성 후 수동으로 Typescript에 맞게 꾸며야만 했으나, vue cli 3 버전부터는 프로젝트 생성 시 옵션을 통하여 Typescript를 선택할 수 있어 많이 편해졌습니다.</p>
+<p>터미널 (또는 CMD)창을 열어 아래 명령어를 입력하여 vue-cli를 설치 해 줍니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g @vue&#x2F;cli</span><br></pre></td></tr></table></figure>
+<p>이제 간단히 vue cli 설치가 끝났습니다.</p>
+<p>npm을 대신할 패키지 매니저 yarn도 설치 해줍니다.<br>(npm을 사용하실 분들은 설치하지 않으셔도 됩니다.)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g yarn</span><br></pre></td></tr></table></figure>
+<p>이제 콘솔에서 <code>vue</code> 명령어를 통해 vue cli를 호출할 수 있습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vue --version</span><br></pre></td></tr></table></figure>
+<p>글 작성 시점의 최신 버전은 3.2.1이네요.</p>
+<h2 id="vue-cli를-통해-프로젝트-생성"><a href="#vue-cli를-통해-프로젝트-생성" class="headerlink" title="vue cli를 통해 프로젝트 생성"></a>vue cli를 통해 프로젝트 생성</h2><p>vue-cli를 통해 프로젝트를 생성하는것은 아주 쉽습니다.</p>
+<p>터미널을 열고</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vue ui</span><br></pre></td></tr></table></figure>
+<p>를 입력하여 브라우저를 통한 gui화면을 통해 뷰 프로젝트를 생성하고 관리할 수도 있습니다.</p>
+<p>그러나, 터미널이 더 편한 개발자들도 많을 것 같습니다.<br>(속도도 더 빠르구요..)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vue create test-typescript-project</span><br></pre></td></tr></table></figure>
+<p>터미널에서 위 명령어를 입력합니다.</p>
+<img src="/20181026/frontend-vue-typescript-1/1.png" class title="사진1">
+
+<p>default(babel, eslint) 와 Manually select features 를 선택할 수 있습니다. 우리는 typescript를 사용할 것이기 때문에 Manually select features를 선택합니다.</p>
+<p>선택한 후 프로젝트 구성에 맞는 옵션을 선택 합니다.</p>
+<img src="/20181026/frontend-vue-typescript-1/2.png" class title="사진2">
+
+<p>이번 샘플 프로젝트에서는 Babel, <strong>Typescript</strong>, Router, Vuex, CSS Pre-processors, Linter/Formatter만 선택하고 진행합니다.<br>(Unit Test나 E2E Testing은 제외합니다. 언제든 추후에 추가할 수 있습니다.)</p>
+<p>babel은 js를 컴파일 하기 위한 녀석이라고 보면 되고, 두번째, Typescript가 핵심입니다.</p>
+<p>Router는 라우팅 경로를 컨트롤하기 위한 vue 플러그인, Vuex는 상태관리를 위한 vue 플러그인이고,</p>
+<p>CSS Pre-processors는 SCSS를 사용하기 위함, Linter/Formatter는 문법 검사 하는 녀석이라고 생각하면 됩니다. <del>(더이상의 자세한 설명은 생략한다)</del></p>
+<p>옵션들을 선택하고 <code>Enter</code>를 누르면, 아래와 같은 질문을 만나게 됩니다.</p>
+<img src="/20181026/frontend-vue-typescript-1/3.png" class title="사진3">
+
+<p>아래 첨부한 그림과 같이 선택해 줍니다.</p>
+<img src="/20181026/frontend-vue-typescript-1/4.png" class title="사진4">
+
+<p>모두 선택 한 후 또다시 <code>Enter</code>!!!</p>
+<p>조금 기다린 후에, 아래와 같이 프로젝트가 완성 되었다는 메세지를 만날 수 있습니다.</p>
+<img src="/20181026/frontend-vue-typescript-1/5.png" class title="사진5">
+
+<p>터미널 하단에 성공적으로 프로젝트가 생성되었다는 메세지와 함께, 테스트 해볼 수 있는 명령어를 예시로 들어줍니다.</p>
+<p>터미널에 그대로 입력해 봅니다.<br>로컬 개발 서버가 구동됩니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd test-typescript-project</span><br><span class="line">yarn serve</span><br></pre></td></tr></table></figure>
+
+<img src="/20181026/frontend-vue-typescript-1/6.png" class title="사진6">
+
+<p>성공적으로 컴파일 되었다는 메세지와 함께<br>브라우저로 개발서버에 접속해 볼 수 있는 주소가 표시됩니다.</p>
+<img src="/20181026/frontend-vue-typescript-1/7.png" class title="사진7">
+
+<p>잘 작동되는것을 확인해 볼 수 있습니다.</p>
+<p>다음 포스트에서는 대략적인 폴더 구조와 컴포넌트 구성을 해보겠습니다.<br>감사합니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/TypeScript/" rel="tag">TypeScript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/VueJS/" rel="tag">VueJS</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20181109/frontend-vue-typescript-2/" data-tooltip="VueJS 에서 Typescript로 개발하기 2" aria-label="PREVIOUS: VueJS 에서 Typescript로 개발하기 2">
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20181009/AmazonMQ-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/" data-tooltip="AmazonMQ 사용하기" aria-label="NEXT: AmazonMQ 사용하기">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/" title="Share on Facebook" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/" title="Share on Twitter" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2021 shockshot@naver.com. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20181109/frontend-vue-typescript-2/" data-tooltip="VueJS 에서 Typescript로 개발하기 2" aria-label="PREVIOUS: VueJS 에서 Typescript로 개발하기 2">
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/20181009/AmazonMQ-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/" data-tooltip="AmazonMQ 사용하기" aria-label="NEXT: AmazonMQ 사용하기">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/" title="Share on Facebook" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/" title="Share on Twitter" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="2">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/" aria-label="Share on Facebook" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/" aria-label="Share on Twitter" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <h4 id="about-card-name">shockshot@naver.com</h4>
+        
+            <div id="about-card-bio"><p>author.bio</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover2.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ofs4ykkzhow0axhilcw7ijqajqncd242ivjtsphmyhqoivownzrn8dpzz1yu.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://blog2.deliwind.com/20181026/frontend-vue-typescript-1/';
+              
+            this.page.identifier = '20181026/frontend-vue-typescript-1/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'blog2deliwind';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>
